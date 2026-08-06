@@ -1,9 +1,6 @@
-//
 //  UI+CustomFont.swift
 //  HoneyHole
-//
 //  Created by Shivam Tyagi on 30/09/24.
-//
 
 import UIKit
 
@@ -42,9 +39,12 @@ private func calculateSize(for size: CGFloat) -> CGFloat {
 
     if IS_IPHONE {
         switch SCREEN_MAX_LENGTH {
-        case 480: adjustedSize -= 2
+//        case 480: adjustedSize -= 2
+        case 480: adjustedSize = size
         case 568: adjustedSize = size
+//        case 667: adjustedSize += 2
         case 667: adjustedSize += 2
+//        case 736: adjustedSize += 5
         case 736: adjustedSize += 5
         case 812: adjustedSize += isLandscape ? 3 : 4
         case 844: adjustedSize += isLandscape ? 4 : 5

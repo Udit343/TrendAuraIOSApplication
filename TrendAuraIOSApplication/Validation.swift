@@ -39,30 +39,27 @@ extension UITextField {
     }
     
     func isValidPassword() -> Bool {
-
+        
         guard let password = self.text else {
             return false
         }
-
+        
         return password.count >= 8
     }
-
+    
     func isValidName() -> Bool {
-
+        
         guard let name = self.text else {
             return false
         }
-
+        
         return name.count >= 3
     }
-}
-
-
-extension UITextField {
-
+    
     func isSingleCharacter(_ string: String) -> Bool {
         return string.count == 1 && string.allSatisfy(\.isNumber)
     }
+    
 }
 
 extension String {
@@ -87,6 +84,12 @@ extension String {
     func isValidName() -> Bool {
         count >= 3
     }
+    
+    func isValidLinks()-> Bool {
+         let regex = "^(https?:\\/\\/)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(/.*)?$"
+        
+        return NSPredicate(format: "SELF MATCHES %@", regex).evaluate(with: self)
+    }
 }
 
 //extension UIButton {
@@ -97,3 +100,5 @@ extension String {
 //        return
 //    }
 //}
+
+

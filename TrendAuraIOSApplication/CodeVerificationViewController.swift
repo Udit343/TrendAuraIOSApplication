@@ -24,6 +24,9 @@ class CodeVerificationViewController: UIViewController {
     
     @IBOutlet weak var backgroundImageView: UIImageView!
     
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         titleLabel.font = UIFont.Outfit_SemiBold(size: 23)
@@ -33,6 +36,18 @@ class CodeVerificationViewController: UIViewController {
         topLineView.layer.cornerRadius = 3
             
         setupOTPFields()
+        
+        let tapGesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(backgroundTapped)
+        )
+        
+        
+        view.addGestureRecognizer(tapGesture)
+        
+        tapGesture.cancelsTouchesInView = false
+        
+        navigationController?.navigationBar.isHidden = true
     }
     
     override func viewDidLayoutSubviews() {
@@ -115,20 +130,27 @@ class CodeVerificationViewController: UIViewController {
         
 
 //        let exploreVC = storyboard?.instantiateViewController(withIdentifier: "ExploreViewController") as! ExploreViewController
-//        
+//
+//        print(navigationController)
+//
 //        navigationController?.pushViewController(exploreVC, animated: true)
         
         let tabBarVC = storyboard?.instantiateViewController(
-            withIdentifier: "TabBarController"
-        ) as! TabBarController
+        withIdentifier: "TabBarController"
+    ) as! TabBarController
+        
+        print(navigationController)
 
-        navigationController?.pushViewController(
-            tabBarVC,
-            animated: true
-        )
+    navigationController?.pushViewController(
+        tabBarVC,
+        animated: true
+    )
+        
     }
     
     @IBAction func continueButtonTapped(_ sender: UIButton) {
+        
+       // print("Button tapped")
 
         verifyOTP()
     }
@@ -141,6 +163,19 @@ class CodeVerificationViewController: UIViewController {
         view.endEditing(true)
 
         super.touchesBegan(touches, with: event)
+    }
+    
+    
+    @objc func backgroundTapped(_ sender : UITapGestureRecognizer){
+        
+        view.endEditing(true)
+
+        
+        let location  = sender.location(in: view)
+        
+        if !backgroundImageView.frame.contains(location){
+            dismiss(animated: true)
+        }
     }
 }
 
@@ -183,7 +218,7 @@ extension CodeVerificationViewController : UITextFieldDelegate {
 
             textField.resignFirstResponder()
 
-            verifyOTP()
+          //  verifyOTP()
         }
 
         return false
@@ -217,5 +252,6 @@ extension CodeVerificationViewController : UITextFieldDelegate {
             UIColor.white.withAlphaComponent(0.2).cgColor
         }
     }
+    
     
 }

@@ -10,8 +10,12 @@ class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        print("TabBarController viewDidLoad running")
+        
         setupTabs()
-        customizeAppearance()
+        //customizeAppearance()
+        setupTabBarAppearance()
     }
     
     private func setupTabs() {
@@ -19,29 +23,29 @@ class TabBarController: UITabBarController {
         let sb = UIStoryboard(name: "Main", bundle: nil)
 
         let search = UINavigationController(
-            rootViewController: sb.instantiateViewController(
-                withIdentifier: "SearchViewController")
-        )
+                    rootViewController: sb.instantiateViewController(
+                        withIdentifier: "ExploreViewController")
+                )
 
-        let explore = UINavigationController(
-            rootViewController: sb.instantiateViewController(
-                withIdentifier: "ExploreViewController")
-        )
+                let explore = UINavigationController(
+                    rootViewController: sb.instantiateViewController(
+                        withIdentifier: "ExploreViewController")
+                )
 
-        let add = UINavigationController(
-            rootViewController: sb.instantiateViewController(
-                withIdentifier: "ExploreViewController")
-        )
+                let add = UINavigationController(
+                    rootViewController: sb.instantiateViewController(
+                        withIdentifier: "ExploreViewController")
+                )
 
-        let inbox = UINavigationController(
-            rootViewController: sb.instantiateViewController(
-                withIdentifier: "ExploreViewController")
-        )
+                let inbox = UINavigationController(
+                    rootViewController: sb.instantiateViewController(
+                        withIdentifier: "ExploreViewController")
+                )
 
-        let profile = UINavigationController(
-            rootViewController: sb.instantiateViewController(
-                withIdentifier: "SearchViewController")
-        )
+                let profile = UINavigationController(
+                    rootViewController: sb.instantiateViewController(
+                        withIdentifier: "SearchViewController")
+                )
 
         search.setNavigationBarHidden(true, animated: false)
         explore.setNavigationBarHidden(true, animated: false)
@@ -50,34 +54,33 @@ class TabBarController: UITabBarController {
         profile.setNavigationBarHidden(true, animated: false)
 
         search.tabBarItem = UITabBarItem(
-            title: "search",
-            image: UIImage(named: "store"),
-            selectedImage: UIImage(named: "store")
-        )
+                    title: "Store",
+                    image: UIImage(named: "store")?.withRenderingMode(.alwaysOriginal),
+                    selectedImage: UIImage(named: "store_Image")?.withRenderingMode(.alwaysOriginal)
+                )
 
-        explore.tabBarItem = UITabBarItem(
-            title: "Explore",
-            image: UIImage(named: "exploreImage!"),
-            selectedImage: UIImage(named: "exploreImage!")
-        )
+                explore.tabBarItem = UITabBarItem(
+                    title: "Explore",
+                    image: UIImage(named: "explore_Image")?.withRenderingMode(.alwaysOriginal),
+                    selectedImage: UIImage(named: "explore")?.withRenderingMode(.alwaysOriginal)
+                )
 
-        add.tabBarItem = UITabBarItem(
-            title: " ",
-            image: UIImage(named: "home"),
-            selectedImage: UIImage(named: "home")
-        )
-
+                add.tabBarItem = UITabBarItem(
+                    title: "",
+                    image: UIImage(named: "home")?.withRenderingMode(.alwaysOriginal),
+                    selectedImage: UIImage(named: "home")?.withRenderingMode(.alwaysOriginal)
+                )
         inbox.tabBarItem = UITabBarItem(
-            title: "Inbox",
-            image: UIImage(named: "message"),
-            selectedImage: UIImage(named: "message")
-        )
+                    title: "Inbox",
+                    image: UIImage(named: "message")?.withRenderingMode(.alwaysOriginal),
+                    selectedImage: UIImage(named: "message_Image")?.withRenderingMode(.alwaysOriginal)
+                )
 
-        profile.tabBarItem = UITabBarItem(
-            title: "Profile",
-            image: UIImage(named: "profile"),
-            selectedImage: UIImage(named: "profile")
-        )
+                profile.tabBarItem = UITabBarItem(
+                    title: "Profile",
+                    image: UIImage(named: "profile")?.withRenderingMode(.alwaysOriginal),
+                    selectedImage: UIImage(named: "profile_Image")?.withRenderingMode(.alwaysOriginal)
+                )
 
         viewControllers = [
             search,
@@ -88,22 +91,42 @@ class TabBarController: UITabBarController {
         ]
     }
     
-    private func customizeAppearance() {
+    let gradientColor = UIColor.gradientColor(
+        colors: [
+            UIColor(hex: "FFCC70"),
+            UIColor(hex: "C850C0"),
+            UIColor(hex: "4C57CF")
+        ],
+        size: CGSize(width: 60, height: 20)
+    )
+    
+    private func setupTabBarAppearance() {
+        tabBar.isTranslucent = false
 
         let appearance = UITabBarAppearance()
-       // appearance.configureWithOpaqueBackground()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .black
 
-        appearance.backgroundEffect = nil
-        //appearance.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
+        appearance.stackedLayoutAppearance.normal.iconColor = .white
+
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: gradientColor
+        ]
+        appearance.stackedLayoutAppearance.selected.iconColor = .systemBlue
 
         tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
 
-        if #available(iOS 15.0, *) {
-            tabBar.scrollEdgeAppearance = appearance
-        }
+        tabBar.backgroundColor = .black.withAlphaComponent(0.96)
+        tabBar.tintColor = .white
+        tabBar.unselectedItemTintColor = .white
 
-        tabBar.isTranslucent = false
     }
+    
 }
 
 

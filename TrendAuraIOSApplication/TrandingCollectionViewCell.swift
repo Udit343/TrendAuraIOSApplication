@@ -18,7 +18,7 @@ class TrandingCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
              super.awakeFromNib()
         
-        hotLevel.font = UIFont.Outfit_Medium(size: 11)
+        hotLevel.font = UIFont.Outfit_Medium(size: 10.5)
 //        outerView.layer.borderWidth = 2
 //        outerView.layer.borderColor = UIColor.white.cgColor
         outerView.layer.cornerRadius = screenHeightFactor * 14
@@ -42,7 +42,7 @@ class TrandingCollectionViewCell: UICollectionViewCell {
                 UIColor(hex: "C850C0"),
                 UIColor(hex: "4C57CF")
             ],
-            borderWidth: 2.5,
+            borderWidth: 2,
             startPoint: CGPoint(x: 1, y: 0),
             endPoint: CGPoint(x: 0, y: 1)
         )

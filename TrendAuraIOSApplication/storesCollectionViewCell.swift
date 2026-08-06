@@ -13,7 +13,7 @@ class storesCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
          super.awakeFromNib()
         
-        storeName.font = UIFont.Outfit_Regular(size: 11)
+        storeName.font = UIFont.Outfit_Regular(size: 10)
     }
     
     func configure(with item: StoreItem) {

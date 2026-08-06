@@ -76,9 +76,9 @@ class SignUpTableViewCell: UITableViewCell {
 
         let image = isPasswordVisible ?
 
-        UIImage(named: "hidePassword") :
+        UIImage(named: "showPassword") :
 
-        UIImage(named: "showPassword")
+        UIImage(named: "hidePassword")
 
         hideShowImageView.image = image
     }

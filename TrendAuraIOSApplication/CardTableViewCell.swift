@@ -14,6 +14,7 @@ class CardTableViewCell: UITableViewCell, UICollectionViewDelegateFlowLayout, UI
     private var products : [ProductItem] = []
     
     
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -49,7 +50,9 @@ class CardTableViewCell: UITableViewCell, UICollectionViewDelegateFlowLayout, UI
                             layout collectionViewLayout: UICollectionViewLayout,
                             sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-            return CGSize(width: screenWidthFactor * 180, height: screenHeightFactor * 250)
+//        return CGSize(width: contentView.frame.height * 0.54, height: contentView.frame.height)
+        
+        return CGSize(width: screenHeightFactor * 116, height: screenHeightFactor * 240)
 }
     
     var didSelectCollectionItem: ((IndexPath) -> Void)?

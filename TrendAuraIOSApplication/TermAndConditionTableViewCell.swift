@@ -34,7 +34,7 @@ class TermAndConditionTableViewCell: UITableViewCell {
             isChecked.toggle()
 
             let image = UIImage(
-                named: isChecked ? "Check" : "Uncheck"
+                named: isChecked ? "check1" : "Uncheck"
             )
 
             checkBoxButton.setImage(image, for: .normal)

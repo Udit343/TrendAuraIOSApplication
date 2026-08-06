@@ -266,3 +266,25 @@ extension UIImage {
         return image ?? UIImage()
     }
 }
+
+
+
+
+///// for tabbar
+extension UIColor {
+    static func gradientColor(colors: [UIColor], size: CGSize) -> UIColor {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = CGRect(origin: .zero, size: size)
+        gradientLayer.colors = colors.map { $0.cgColor }
+        gradientLayer.startPoint = CGPoint(x: 1, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 0, y: 1)
+
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        defer { UIGraphicsEndImageContext() }
+        guard let context = UIGraphicsGetCurrentContext() else { return .white }
+        gradientLayer.render(in: context)
+        guard let image = UIGraphicsGetImageFromCurrentImageContext() else { return .white }
+
+        return UIColor(patternImage: image)
+    }
+}

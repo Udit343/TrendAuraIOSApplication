@@ -116,8 +116,8 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         if collectionView == promosCollectionView {
 
                 return CGSize(
-                    width: screenWidthFactor * 137,
-                    height: screenHeightFactor * 245
+                    width: 0.47 * promosCollectionView.frame.width ,
+                    height: 0.64 * promosCollectionView.frame.height
                 )
 
             } else {
@@ -180,6 +180,8 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
                 ) as! UsersTableViewCell
 
                 cell.configure(with: usersData[indexPath.row])
+            
+                
 
                 return cell
 
@@ -194,6 +196,22 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
 
                 return cell
             }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if tableView == userTableView {
+            
+            let profileVC  = storyboard?.instantiateViewController(withIdentifier: "ProfilePageViewController") as! ProfilePageViewController
+            
+            let nav  = UINavigationController(rootViewController: profileVC)
+            
+            nav.modalTransitionStyle = .crossDissolve
+            nav.modalPresentationStyle = .overFullScreen
+            
+            present(nav, animated: true)
+            
+            
+        }
     }
     
     func updateScreen(){
@@ -224,7 +242,7 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         if tableView == hashTagTableView{
-            return screenHeightFactor * 60
+            return screenHeightFactor * 50
         }else{
             return UITableView.automaticDimension
         }
@@ -237,8 +255,6 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         filterVC.modalPresentationStyle = .overFullScreen
         filterVC.modalTransitionStyle = .crossDissolve
         
-        
         present(filterVC, animated: true)
     }
-    
 }

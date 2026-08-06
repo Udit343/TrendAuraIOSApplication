@@ -11,6 +11,8 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var outerView : UIView!
     @IBOutlet weak var categoryLabel : UILabel!
     
+    private var isGradientSelected = false
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -19,7 +21,7 @@ class CategoryCollectionViewCell: UICollectionViewCell {
         
         outerView.layer.cornerRadius = screenHeightFactor * 10
         
-        categoryLabel.font = UIFont.Outfit_Regular(size: 14)
+        categoryLabel.font = UIFont.Outfit_Regular(size: 13)
         
         updateUI(isSelected: false)
     }
@@ -32,51 +34,49 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        outerView.applyGradientBorder(
-            colors: [
-                
-                UIColor(hex: "FFCC70"),
-                UIColor(hex: "C850C0"),
-                UIColor(hex: "4C57CF")
+
+        outerView.layer.sublayers?.removeAll {
+            $0.name == "GradientBorder" ||
+            $0.name == "GradientBackground"
+        }
+
+        if isGradientSelected {
+
+            outerView.layer.borderWidth = 0
+
+            outerView.applyGradientBorder(
+                colors: [
+                    UIColor(hex: "FFCC70"),
+                    UIColor(hex: "C850C0"),
+                    UIColor(hex: "4C57CF")
+                ],
+                borderWidth: 2,
+                startPoint: CGPoint(x: 1, y: 0),
+                endPoint: CGPoint(x: 0, y: 1)
+            )
+            outerView.applyGradientBackground(colors: [
+                UIColor(hex: "FFCC70").withAlphaComponent(0.2),
+                        UIColor(hex: "C850C0").withAlphaComponent(0.2),
+                        UIColor(hex: "4C57CF").withAlphaComponent(0.2)
             ],
-            borderWidth: 2,
             startPoint: CGPoint(x: 1, y: 0),
             endPoint: CGPoint(x: 0, y: 1)
-        )
+            )
+
+        } else {
+
+            outerView.layer.borderColor =
+                UIColor.white.withAlphaComponent(0.8).cgColor
+        }
+    
     }
     
+    
     func updateUI(isSelected: Bool) {
-        
-        if isSelected {
-            
-            //outerView.backgroundColor = UIColor.clear
-            
-            //                outerView.applyGradientBorder(
-            //                    colors: [
-            //
-            //                        UIColor(hex: "FFCC70"),
-            //                        UIColor(hex: "C850C0"),
-            //                        UIColor(hex: "4C57CF")
-            //                    ],
-            //                    borderWidth: 2,
-            //                    startPoint: CGPoint(x: 1, y: 0),
-            //                    endPoint: CGPoint(x: 0, y: 1)
-            //                )
-            
-        } else {
-            
-            //                outerView.layer.sublayers?.removeAll {
-            //                    $0.name == "GradientBorder"
-            //                }
-            //
-            //                outerView.layer.borderWidth = 0
-            //                outerView.layer.borderColor = UIColor.clear.cgColor
-            //                outerView.backgroundColor = .clear
-            //
-            //                categoryLabel.textColor = .white
-            //            }
-        }
-        
+
+        isGradientSelected = isSelected
+
+        setNeedsLayout()
     }
 }
+

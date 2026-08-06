@@ -30,33 +30,33 @@ class CardCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        outerView.layer.cornerRadius = 15
+        outerView.layer.cornerRadius = screenHeightFactor * 10
         outerView.layer.borderWidth = 1
         outerView.layer.borderColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.2).cgColor
         
-        nameLabel.font = UIFont.Outfit_Medium(size: 11)
+        nameLabel.font = UIFont.Outfit_Medium(size: 9.5)
         
-        cardTitleLabel.font = UIFont.Outfit_Medium(size: 12)
+        cardTitleLabel.font = UIFont.Outfit_Medium(size: 10.5)
         
-        cardSubTitleLabel.font = UIFont.Outfit_Regular(size: 10)
+        cardSubTitleLabel.font = UIFont.Outfit_Regular(size: 9.5)
         
         visitView.layer.cornerRadius = screenHeightFactor * 10
        // visitView.layer.borderWidth = 1
        // visitView.layer.borderColor = UIColor.white.cgColor
 
-        visitLabel.font = UIFont.Outfit_Medium(size: 10)
+        visitLabel.font = UIFont.Outfit_Medium(size: 8)
         
         addCartView.layer.cornerRadius = screenHeightFactor * 9
         addCartView.layer.borderWidth = 1
         addCartView.layer.borderColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.5).cgColor
         
-        addCartLabel.font = UIFont.Outfit_Medium(size: 10)
+        addCartLabel.font = UIFont.Outfit_Medium(size: 8)
         
         visitCountView.layer.cornerRadius = screenHeightFactor * 10
-        visitCountLabel.font = UIFont.Outfit_Bold(size: 9)
+        visitCountLabel.font = UIFont.Outfit_Bold(size: 7)
         
         likeView.layer.cornerRadius = screenHeightFactor * 10
-        likeLabel.font = UIFont.Outfit_Bold(size: 9)
+        likeLabel.font = UIFont.Outfit_Bold(size: 7)
     }
     
     func configure(with item: ProductItem) {

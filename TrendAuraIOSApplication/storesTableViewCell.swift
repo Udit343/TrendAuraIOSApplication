@@ -46,6 +46,6 @@ class storesTableViewCell: UITableViewCell, UICollectionViewDataSource, UICollec
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        return CGSize(width: screenWidthFactor * 65, height: screenHeightFactor * 70)
+        return CGSize(width: screenHeightFactor * 45, height: screenHeightFactor * 63)
     }
 }

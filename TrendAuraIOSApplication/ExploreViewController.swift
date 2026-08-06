@@ -27,7 +27,7 @@ class ExploreViewController: UIViewController, UITableViewDataSource, UITableVie
             font: UIFont.Outfit_Regular(size: 11)
         )
         
-        searchView.layer.cornerRadius = screenHeightFactor * 14
+        searchView.layer.cornerRadius = screenHeightFactor * 13
         
 //        searchButton.layer.borderWidth = 2
 //        searchButton.layer.borderColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.3).cgColor
@@ -90,44 +90,41 @@ class ExploreViewController: UIViewController, UITableViewDataSource, UITableVie
 
                 self.navigationController?.pushViewController(detailsVC, animated: true)
             }
-            
             return cell
             
         }
-        
     }
     
     func tableView(_ tableView: UITableView,
                    heightForRowAt indexPath: IndexPath) -> CGFloat {
 
         if indexPath.row == 0 {
-            return screenHeightFactor * 35
+            return screenHeightFactor * 33
         }
 
         let section = ExploreDummyData.sections[indexPath.section]
-
         switch section.type {
 
         case .hot:
-            return screenHeightFactor * 40
+            return screenHeightFactor * 37
 
         case .stores:
             return screenHeightFactor * 70
 
         case .cards:
+//            return tableView.frame.height * 0.51
+            
             return screenHeightFactor * 260
         }
     }
     
     @IBAction func filterPage(_ sender : UIButton){
-        
         let filterVC = storyboard?.instantiateViewController(withIdentifier: "FilterViewController")as! FilterViewController
         
         filterVC.modalPresentationStyle = .overFullScreen
         filterVC.modalTransitionStyle = .crossDissolve
         
-        
         present(filterVC, animated: true)
+        
     }
-    
 }

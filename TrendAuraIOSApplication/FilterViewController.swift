@@ -33,12 +33,12 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
         enterTextField.setPlaceholder(text: "Search…", color: UIColor(hex: "F3F4F8"), font: UIFont.Outfit_Regular(size: 12))
         
         resetButton.titleLabel?.font = UIFont.Outfit_Medium(size: 13)
-        resetButton.layer.cornerRadius = screenHeightFactor * 15
+        resetButton.layer.cornerRadius = screenHeightFactor * 14
         
         applyButton.titleLabel?.font = UIFont.Outfit_Medium(size: 13)
         applyButton.layer.borderWidth = 2
         applyButton.layer.borderColor = UIColor.white.cgColor
-        applyButton.layer.cornerRadius = screenHeightFactor * 15
+        applyButton.layer.cornerRadius = screenHeightFactor * 13
         
         tableView.dataSource = self
         tableView.delegate = self

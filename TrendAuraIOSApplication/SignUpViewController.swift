@@ -233,10 +233,20 @@ class SignUpViewController: UIViewController, UITableViewDataSource, UITableView
         
 //        navigationController?.pushViewController(CodeVerificationViewControllerVC, animated: true)
         
-        CodeVerificationViewControllerVC.modalPresentationStyle = .overFullScreen
-        CodeVerificationViewControllerVC.modalTransitionStyle = .crossDissolve
+        let nav = UINavigationController(rootViewController: CodeVerificationViewControllerVC)
+
         
-        self.present(CodeVerificationViewControllerVC, animated: true)
+//        CodeVerificationViewControllerVC.modalPresentationStyle = .overFullScreen
+//        CodeVerificationViewControllerVC.modalTransitionStyle = .crossDissolve
+//        
+//        self.present(CodeVerificationViewControllerVC, animated: true)
+        
+        nav.modalPresentationStyle = .overFullScreen
+        nav.modalTransitionStyle = .crossDissolve
+
+        nav.setNavigationBarHidden(true, animated: false)
+        
+        present(nav, animated: true)
         
         
     }

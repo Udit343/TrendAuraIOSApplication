@@ -12,23 +12,28 @@ class FilterSubSectionTableViewCell: UITableViewCell {
     
   var   ischeck = false
     
+    
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         subSectionLavel.font = UIFont.Outfit_Light(size: 12)
         
         selectionStyle = .none
+        
+        
+        
     }
     
     
     func configure(with subSection : String){
         subSectionLavel.text = subSection
-        tickButton.setImage(UIImage(named: "filterCheck"), for: .normal)
+        tickButton.setImage(UIImage(named: "filterUncheck"), for: .normal)
     }
     
     @IBAction func checkUnCheck(_ sender : UIButton){
         ischeck.toggle()
         
-        let image = ischeck ? UIImage(named: "filterUncheck") : UIImage(named: "filterCheck")
+        let image = ischeck ? UIImage(named: "filterUncheck") : UIImage(named: "check1")
         
         tickButton.setImage(image, for: .normal)
         
