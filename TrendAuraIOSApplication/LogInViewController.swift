@@ -183,4 +183,12 @@ class LogInViewController: UIViewController {
         navigationController?.pushViewController(SignUpViewControllerVC, animated: true)
     }
     
+    @IBAction func forgotPage(_ sender : UIButton){
+        
+        let forgotPage = storyboard?.instantiateViewController(withIdentifier: "ForgotPasswordViewController") as! ForgotPasswordViewController
+        
+        navigationController?.pushViewController(forgotPage, animated: true)
+        
+    }
+    
 }

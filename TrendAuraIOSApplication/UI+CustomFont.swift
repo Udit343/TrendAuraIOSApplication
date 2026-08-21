@@ -74,25 +74,6 @@ extension UIFont {
     }
 
     // MARK: - Poppins Fonts
-    class func Poppins_Black(size: CGFloat) -> UIFont { UIFont(name: "Poppins-Black", size: calculateSize(for: size))! }
-    class func Poppins_BlackItalic(size: CGFloat) -> UIFont { UIFont(name: "Poppins-BlackItalic", size: calculateSize(for: size))! }
-    class func Poppins_Bold(size: CGFloat) -> UIFont { UIFont(name: "Poppins-Bold", size: calculateSize(for: size))! }
-    class func Poppins_BoldItalic(size: CGFloat) -> UIFont { UIFont(name: "Poppins-BoldItalic", size: calculateSize(for: size))! }
-    class func Poppins_ExtraBold(size: CGFloat) -> UIFont { UIFont(name: "Poppins-ExtraBold", size: calculateSize(for: size))! }
-    class func Poppins_ExtraBoldItalic(size: CGFloat) -> UIFont { UIFont(name: "Poppins-ExtraBoldItalic", size: calculateSize(for: size))! }
-    class func Poppins_ExtraLight(size: CGFloat) -> UIFont { UIFont(name: "Poppins-ExtraLight", size: calculateSize(for: size))! }
-    class func Poppins_ExtraLightItalic(size: CGFloat) -> UIFont { UIFont(name: "Poppins-ExtraLightItalic", size: calculateSize(for: size))! }
-    class func Poppins_Italic(size: CGFloat) -> UIFont { UIFont(name: "Poppins-Italic", size: calculateSize(for: size))! }
-    class func Poppins_Light(size: CGFloat) -> UIFont { UIFont(name: "Poppins-Light", size: calculateSize(for: size))! }
-    class func Poppins_LightItalic(size: CGFloat) -> UIFont { UIFont(name: "Poppins-LightItalic", size: calculateSize(for: size))! }
-    class func Poppins_Medium(size: CGFloat) -> UIFont { UIFont(name: "Poppins-Medium", size: calculateSize(for: size))! }
-    class func Poppins_MediumItalic(size: CGFloat) -> UIFont { UIFont(name: "Poppins-MediumItalic", size: calculateSize(for: size))! }
-    class func Poppins_Regular(size: CGFloat) -> UIFont { UIFont(name: "Poppins-Regular", size: calculateSize(for: size))! }
-    class func Poppins_SemiBold(size: CGFloat) -> UIFont { UIFont(name: "Poppins-SemiBold", size: calculateSize(for: size))! }
-    class func Poppins_SemiBoldItalic(size: CGFloat) -> UIFont { UIFont(name: "Poppins-SemiBoldItalic", size: calculateSize(for: size))! }
-    class func Poppins_Thin(size: CGFloat) -> UIFont { UIFont(name: "Poppins-Thin", size: calculateSize(for: size))! }
-    class func Poppins_ThinItalic(size: CGFloat) -> UIFont { UIFont(name: "Poppins-ThinItalic", size: calculateSize(for: size))! }
-    
     class func Outfit_SemiBold(size: CGFloat)->UIFont{
         UIFont(name: "Outfit-SemiBold", size: calculateSize(for: size))!
     }
@@ -104,6 +85,10 @@ extension UIFont {
     class func Outfit_Medium(size: CGFloat)->UIFont{
           UIFont(name: "Outfit-Medium", size: calculateSize(for: size))!
     }
+    
+//    class func Outfit_Medium_Fixed(size: CGFloat)->UIFont{
+//          UIFont(name: "Outfit-Medium", size: size)!
+//    }
     
     class func Outfit_Regular(size: CGFloat)->UIFont{
         UIFont(name: "Outfit-Regular", size: calculateSize(for: size))!
@@ -124,14 +109,57 @@ extension UIFont {
         UIFont(name: "Inter_18pt-SemiBold", size: calculateSize(for: size))!
     }
     
-
-    // MARK: - RoundedMplus1c Fonts
-    class func MRoundedMplus1c_Black(size: CGFloat) -> UIFont { UIFont(name: "RoundedMplus1c-Black", size: calculateSize(for: size))! }
-    class func RoundedMplus1c_Bold(size: CGFloat) -> UIFont { UIFont(name: "RoundedMplus1c-Bold", size: calculateSize(for: size))! }
-    class func RoundedMplus1c_ExtraBold(size: CGFloat) -> UIFont { UIFont(name: "RoundedMplus1c-ExtraBold", size: calculateSize(for: size))! }
-    class func RoundedMplus1c_Light(size: CGFloat) -> UIFont { UIFont(name: "RoundedMplus1c-Light", size: calculateSize(for: size))! }
-    class func RoundedMplus1c_Medium(size: CGFloat) -> UIFont { UIFont(name: "RoundedMplus1c-Medium", size: calculateSize(for: size))! }
-    class func RoundedMplus1c_Regular(size: CGFloat) -> UIFont { UIFont(name: "RoundedMplus1c-Regular", size: calculateSize(for: size))! }
-    class func RoundedMplus1c_Thin(size: CGFloat) -> UIFont { UIFont(name: "RoundedMplus1c-Thin", size: calculateSize(for: size))! }
+    class func Manrope_Regular(size : CGFloat)->UIFont{
+        UIFont(name: "Manrope-Regular", size: calculateSize(for: size))!
+    }
+    
+    class func Manrope_Light(size : CGFloat)->UIFont{
+        UIFont(name: "Manrope-Light", size: calculateSize(for: size))!
+    }
+    
+    
+    class func Manrope_Medium(size : CGFloat)->UIFont{
+        UIFont(name: "Manrope-Medium", size: calculateSize(for: size))!
+    }
 }
 
+
+
+func Outfit_Medium_Fixed(size: CGFloat) -> UIFont {
+    UIFont(
+        name: "Outfit-Medium",
+        size: calculateFixedSize(for: size)
+    )!
+}
+
+private  func calculateFixedSize(for size: CGFloat) -> CGFloat {
+
+    var adjustedSize = size
+
+    if IS_IPHONE {
+
+        switch SCREEN_MAX_LENGTH {
+
+        case 480:
+            adjustedSize = size - 2
+
+        case 568:
+            adjustedSize = size - 2
+
+        case 667:
+            adjustedSize = size - 2
+
+        case 736:
+            adjustedSize = size - 1
+
+        default:
+            adjustedSize = size-1
+        }
+
+    } else if IS_IPAD {
+
+        adjustedSize = size
+    }
+
+    return adjustedSize
+}

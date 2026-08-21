@@ -17,6 +17,8 @@ class ProfilePageViewController: UIViewController, UITableViewDataSource, UITabl
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        backgroundImage.isUserInteractionEnabled = false
+        
         tableView.dataSource = self
         tableView.delegate = self
         
@@ -50,8 +52,23 @@ class ProfilePageViewController: UIViewController, UITableViewDataSource, UITabl
             
             navigationController?.pushViewController(personalVc, animated: true)
             
+        }else if indexPath.row == 2{
+            
+            let subsCriptionVC = storyboard?.instantiateViewController(identifier: "SubCriptionViewController") as! SubCriptionViewController
+            
+            navigationController?.pushViewController(subsCriptionVC, animated: true)
+            
+        }else if indexPath.row == 3 {
+            
+            let contactUsPage = storyboard?.instantiateViewController(identifier: "ContactUsViewController") as! ContactUsViewController
+            
+            navigationController?.pushViewController(contactUsPage, animated: true)
+            
+        }else if indexPath.row == 5{
+            let blockedUsers = storyboard?.instantiateViewController(identifier: "BlockedUserViewController") as! BlockedUserViewController
+            
+            navigationController?.pushViewController(blockedUsers, animated: true)
         }
-        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -67,7 +84,6 @@ class ProfilePageViewController: UIViewController, UITableViewDataSource, UITabl
         if backgroundImage.frame.contains(point) {
             return false
         }
-
         return true
     }
     
@@ -75,7 +91,9 @@ class ProfilePageViewController: UIViewController, UITableViewDataSource, UITabl
           
         view.endEditing(true)
         dismiss(animated: true)
-        
-        
+    }
+    
+    @IBAction func dismissButton(_ sender : UIButton){
+              dismiss(animated: true)
     }
 }

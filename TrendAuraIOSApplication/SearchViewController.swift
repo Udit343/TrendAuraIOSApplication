@@ -86,8 +86,6 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
        }else{
            return CategoryName.count
        }
-        
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -95,7 +93,7 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         if collectionView ==  promosCollectionView {
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardPromosCollectionViewCell", for: indexPath) as! CardPromosCollectionViewCell
-            
+              
             cell.configure(with: cardItems[indexPath.item])
             
             return cell
@@ -137,13 +135,13 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         case 0:
                 selectedCategory = .all
 
-            case 1:
+        case 1:
                 selectedCategory = .users
 
-            case 2:
+        case 2:
                 selectedCategory = .promos
 
-            case 3:
+        case 3:
                 selectedCategory = .hashtags
 
             default:
@@ -196,22 +194,6 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
 
                 return cell
             }
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableView == userTableView {
-            
-            let profileVC  = storyboard?.instantiateViewController(withIdentifier: "ProfilePageViewController") as! ProfilePageViewController
-            
-            let nav  = UINavigationController(rootViewController: profileVC)
-            
-            nav.modalTransitionStyle = .crossDissolve
-            nav.modalPresentationStyle = .overFullScreen
-            
-            present(nav, animated: true)
-            
-            
-        }
     }
     
     func updateScreen(){

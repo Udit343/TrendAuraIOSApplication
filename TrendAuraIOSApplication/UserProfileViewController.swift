@@ -1,14 +1,12 @@
-//
 //  UserProfileViewController.swift
 //  TrendAuraIOSApplication
-//
 //  Created by UDIT PANDEY on 05/08/26.
-//
+
 
 import UIKit
 
-class UserProfileViewController: UIViewController {
-
+class UserProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    
     @IBOutlet weak var backgroundImageView : UIImageView!
     @IBOutlet weak var  backgroundHeaderView : UIImageView!
     @IBOutlet weak var  bellButton : UIButton!
@@ -43,15 +41,21 @@ class UserProfileViewController: UIViewController {
     @IBOutlet weak var  verticalLine1 : UIView!
     @IBOutlet weak var verticalLine2 : UIView!
     @IBOutlet weak var  verticalLine3 : UIView!
+    @IBOutlet weak var  containerView : UIView!
     
+    @IBOutlet weak var tabelView : UITableView!
+    
+    
+    
+    var removeCard : (()->Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        myStoreOuterView.layer.cornerRadius = screenHeightFactor * 20
+        myStoreOuterView.layer.cornerRadius = screenHeightFactor * 19
         mycartOuterView.layer.borderWidth = 1
         mycartOuterView.layer.borderColor = UIColor.white.cgColor
-        mycartOuterView.layer.cornerRadius = screenHeightFactor * 15
+        mycartOuterView.layer.cornerRadius = screenHeightFactor * 12.2
         
         nameLabel.font = UIFont.Outfit_SemiBold(size: 22)
         subNameLabel.font = UIFont.Outfit_Medium(size: 14)
@@ -68,11 +72,17 @@ class UserProfileViewController: UIViewController {
         followingCount.font = UIFont.Manrope_Bold(size: 14)
         followingLabel.font =  UIFont.Manrope_Bold(size: 10)
         
-        descriptionLabel.font = UIFont.Outfit_Light(size: 11)
+        descriptionLabel.font = UIFont.Outfit_Light(size: 10)
         
         mycartLabel.font = UIFont.Outfit_Medium(size: 12)
         
         myStoreLabel.font = UIFont.Outfit_Medium(size: 12)
+        
+        tabelView.dataSource = self
+        tabelView.delegate = self
+        
+//        tabelView.rowHeight = UITableView.automaticDimension
+//        tabelView.estimatedRowHeight = 500
         
     }
     
@@ -99,6 +109,68 @@ class UserProfileViewController: UIViewController {
         startPoint: CGPoint(x: 1, y: 0),
         endPoint: CGPoint(x: 0, y: 1)
         )
+    }
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "UserProfileTableViewCell", for: indexPath) as! UserProfileTableViewCell
+    
+        cell.layoutIfNeeded()
+        
+        cell.removeCard = {[weak self] in
+        
+            self?.myCard()
+        }
+        
+        
+        return cell
+    }
+    
+    @IBAction func settingPage(_ sender : UIButton){
+        
+        let settingPage  = storyboard?.instantiateViewController(withIdentifier: "ProfilePageViewController") as! ProfilePageViewController
+        
+        let nav = UINavigationController(rootViewController: settingPage)
+        
+        nav.modalPresentationStyle = .overFullScreen
+        nav.modalTransitionStyle = .crossDissolve
+        
+        present(nav, animated: true)
+    }
+    
+    func myCard(){
+        
+        let settingPage  = storyboard?.instantiateViewController(withIdentifier: "MyCartViewController") as! MyCartViewController
+        
+        let nav = UINavigationController(rootViewController: settingPage)
+        
+        nav.modalPresentationStyle = .overFullScreen
+        nav.modalTransitionStyle = .crossDissolve
+        
+        present(nav, animated: true)
         
     }
+    
+    @IBAction func notificationCheck(_ sender : UIButton){
+              
+        let notificationPage = storyboard?.instantiateViewController(identifier: "NotificationViewController") as! NotificationViewController
+        
+        navigationController?.pushViewController(notificationPage, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        let rowSpacing = 5 *  6
+        
+        return  (270 * screenHeightFactor) * 5 + CGFloat(rowSpacing) ;
+        
+    }
+    
+    
 }
+

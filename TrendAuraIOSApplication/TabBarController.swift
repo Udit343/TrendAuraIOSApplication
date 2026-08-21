@@ -39,12 +39,12 @@ class TabBarController: UITabBarController {
 
                 let inbox = UINavigationController(
                     rootViewController: sb.instantiateViewController(
-                        withIdentifier: "ExploreViewController")
+                        withIdentifier: "ChatViewController")
                 )
 
                 let profile = UINavigationController(
                     rootViewController: sb.instantiateViewController(
-                        withIdentifier: "SearchViewController")
+                        withIdentifier: "UserProfileViewController")
                 )
 
         search.setNavigationBarHidden(true, animated: false)

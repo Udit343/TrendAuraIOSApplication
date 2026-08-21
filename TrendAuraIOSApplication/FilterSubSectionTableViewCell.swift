@@ -33,7 +33,7 @@ class FilterSubSectionTableViewCell: UITableViewCell {
     @IBAction func checkUnCheck(_ sender : UIButton){
         ischeck.toggle()
         
-        let image = ischeck ? UIImage(named: "filterUncheck") : UIImage(named: "check1")
+        let image = ischeck ? UIImage(named: "check1") : UIImage(named: "filterUncheck")
         
         tickButton.setImage(image, for: .normal)
         
