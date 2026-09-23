@@ -22,10 +22,24 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
     
     var profilevalidation = PersonalProfileValidation()
     
+    var viewModel = PersonalProfileViewModel()
+    
     var isImageSelected = false
+
+    private var selectedImage: UIImage?
+    
+    private let loader = UIActivityIndicatorView(style: .large)
+    
+    private var linkFields: [LinkInfo] = defaultLinkFields
+    
+    var allLinkValues: [String] {
+        profilevalidation.links + profilevalidation.AdditionalLink
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupLoader()
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         
@@ -51,11 +65,92 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
 
             view.addGestureRecognizer(tap)
         
-        profilevalidation.links = Array(
-                repeating: "",
-                count: links.count
-            )
+        linkFields = defaultLinkFields
+        profilevalidation.links = Array(repeating: "", count: defaultLinkFields.count)
+        profilevalidation.AdditionalLink = []
+        
+        
+        
+        viewModel.onError = {[weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onLoadingChanged = {[weak self] isLoading in
+            self?.saveButton.isEnabled = !isLoading
+        }
+        
+        viewModel.onProfileLoaded = {[weak self ] profile in
+            self?.prefill(with : profile)
+        }
+        
+        viewModel.onUpdateSuccess = {[weak self] in
+            
+            guard let self = self else { return }
+
+                self.show_Alert(message: "Profile changed")
+
+                self.navigationController?.popViewController(animated: true)
+            
+        }
+        
+        viewModel.fatchExistingProfile()
+        
     }
+    
+    // PersonalProfileViewController.swift — REPLACE the stray floating code with this proper function
+    func prefill(with profile: UserProfile) {
+        profilevalidation.name = profile.name
+        profilevalidation.username = profile.userName
+        profilevalidation.about = profile.about
+        profilevalidation.state = profile.state
+        profilevalidation.city = profile.city
+        profilevalidation.dob = profile.dob
+        profilevalidation.gender = profile.gender
+
+        linkFields = defaultLinkFields
+        
+        profilevalidation.links = [
+            profile.webLink,
+            profile.whatsappNumber,
+            profile.contactEmail,
+            profile.facebookLink,
+            profile.googleMap,
+            profile.twitterLink,
+            profile.youtubeLink,
+            profile.instagramLink,
+            profile.tikTokLink,
+            profile.linkedinLink
+        ]
+
+        
+        profilevalidation.AdditionalLink = profile.additionalLink.map { $0.link }
+
+        
+        linkFields.append(contentsOf: profilevalidation.AdditionalLink.map { _ in
+            LinkInfo(imageName: "webLink", placeholder: "Website Link")
+        })
+
+        headerNmae.text = profile.name
+
+        if !profile.profilePic.isEmpty, let url = URL(string: profile.profilePic) {
+            isImageSelected = true
+            loadImage(from: url, into: headerProfileImage)
+            imageChnage()
+        }
+
+        tableView.reloadData()
+    }
+    
+    
+    
+    func loadImage(from url: URL, into imageView: UIImageView) {
+            URLSession.shared.dataTask(with: url) { data, _, _ in
+                guard let data = data, let image = UIImage(data: data) else { return }
+                DispatchQueue.main.async {
+                    imageView.image = image
+                }
+            }.resume()
+        }
     
     @objc func hideKeyboard() {
         view.endEditing(true)
@@ -100,43 +195,12 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        //        guard let section = ProfileSection(rawValue: section) else {
-        //            return 0
-        //        }
-        //
-        //        switch section {
-        //
-        //        case .enterName:
-        //            return 1
-        //
-        //        case .userName:
-        //            return 1
-        //
-        //        case .about:
-        //            return 1
-        //
-        //        case .state:
-        //            return 1
-        //
-        //        case .city:
-        //            return 1
-        //
-        //        case .visitLinks:
-        //            return links.count
-        //
-        //        case .gender:
-        //            return 1
-        //
-        //        case .dateOfBirth:
-        //            return 1
-        //        }
-        
         guard let section = ProfileSection(rawValue: section) else {
             return 0
         }
         
         if section == .visitLinks {
-            return links.count + 2
+            return  linkFields.count + 2
         }
         
         return 2
@@ -205,7 +269,7 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
                 for: indexPath
             ) as! ProfileEditAboutTableViewCell
             
-            cell.textView.text = aboutInfo.placeholder
+            cell.configure(with: profilevalidation.about)
             
             cell.didChangedText = {[weak self] text in
                 self?.profilevalidation.about = text
@@ -223,7 +287,8 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
             
             cell.configure(
                 with: locationInfo.states,
-                placeholder: "Select State"
+                placeholder: "Select State",
+                selected: profilevalidation.state
             )
             
             cell.didSelectItem = {[weak self] state in
@@ -241,7 +306,8 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
             
             cell.configure(
                 with: locationInfo.cities,
-                placeholder: "Select cities"
+                placeholder: "Select cities",
+                selected: profilevalidation.city
             )
             
             cell.didSelectItem = {[weak self] city in
@@ -254,38 +320,41 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
             
             
         case .visitLinks:
-            if indexPath.row == links.count + 1 {
+
+            if indexPath.row == linkFields.count + 1 {
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: "ProfileEditAddLinkTableViewCell",
-                    for: indexPath
-                ) as! ProfileEditAddLinkTableViewCell
-                
-                cell.didTapAddField = {[weak self] in
-                
-                    self?.addNewLink()
-                }
-
+                    for: indexPath) as! ProfileEditAddLinkTableViewCell
+                cell.didTapAddField = { [weak self] in self?.addNewLink() }
                 return cell
             }
 
-            let index = indexPath.row - 1
-            
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: "ProfileEditVisitLinksTableViewCell",
-                for: indexPath
-            ) as! ProfileEditVisitLinksTableViewCell
+                for: indexPath) as! ProfileEditVisitLinksTableViewCell
 
-            cell.configure(
-                   with: links[index],
-                   text: profilevalidation.links[index]
-               )
-            
+            let index = indexPath.row - 1
+            let values = allLinkValues
+
+            guard index >= 0, index < linkFields.count, index < values.count else {
+                return cell
+            }
+
+            cell.configure(with: linkFields[index], text: values[index])
+
             cell.didChangeLink = { [weak self] text in
-                    self?.profilevalidation.links[index] = text
+                guard let self else { return }
+                let defaultCount = self.profilevalidation.links.count
+                if index < defaultCount {
+                    self.profilevalidation.links[index] = text
+                } else {
+                    let addIndex = index - defaultCount
+                    guard addIndex < self.profilevalidation.AdditionalLink.count else { return }
+                    self.profilevalidation.AdditionalLink[addIndex] = text
                 }
+            }
 
             return cell
-            
             
         case .gender:
             let cell = tableView.dequeueReusableCell(
@@ -295,7 +364,8 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
             
             cell.configure(
                 with: genderInfo.genders,
-                placeholder: "Select Gender"
+                placeholder: "Select Gender",
+                selected: profilevalidation.gender
             )
             
             cell.didSelectItem = {[ weak self] gender in
@@ -374,7 +444,7 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
         case .visitLinks:
 
             
-            if indexPath.row == links.count + 1 {
+            if indexPath.row == linkFields.count + 1 {
                 return screenHeightFactor * 32
             }
 
@@ -447,11 +517,8 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
         if let image = info[.originalImage] as? UIImage {
 
             headerProfileImage.image = image
-            
+            selectedImage = image
             isImageSelected = true
-
-            
-            imageChnage()
         }
 
         dismiss(animated: true)
@@ -483,9 +550,8 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
         view.endEditing(true)
         
         if validate() {
-            print(profilevalidation)
             
-            show_Alert(message: "Profile Changed")
+            viewModel.saveTapped(form: profilevalidation, newProfilepicURL: nil)
         }
               
     }
@@ -532,50 +598,55 @@ class PersonalProfileViewController: UIViewController, UITableViewDataSource, UI
              return false
          }
          
-         if !isImageSelected {
-
-             show_Alert(message: "Please Select Profile Image")
-             return false
-         }
+//         if !isImageSelected {
+//
+//             show_Alert(message: "Please Select Profile Image")
+//             return false
+//         }
          
          //print("Links Count:", profilevalidation.links.count)
          //print(profilevalidation.links)
          
-         for (index, link) in profilevalidation.links.enumerated() {
-
-             let value = link.trimmingCharacters(in: .whitespacesAndNewlines)
-
-             if value.isEmpty {
-                 show_Alert(message: "Please enter Link \(index + 1)")
-                 return false
-             }
-
-             if !value.isValidLinks() {
-                 show_Alert(message: "Please enter a valid Link \(index + 1)")
-                 return false
-             }
-         }
+//         for (index, link) in profilevalidation.links.enumerated() {
+//
+//             let value = link.trimmingCharacters(in: .whitespacesAndNewlines)
+//
+//             if value.isEmpty {
+//                 show_Alert(message: "Please enter Link \(index + 1)")
+//                 return false
+//             }
+//
+//             if !value.isValidLinks() {
+//                 show_Alert(message: "Please enter a valid Link \(index + 1)")
+//                 return false
+//             }
+//         }
         
         return true
     }
     
     func addNewLink() {
-
-        links.append(
-            LinkInfo(
-                imageName: "webLink",
-                placeholder: "Website Link"
-            )
-        )
-
-        profilevalidation.links.append("")
-
+    
+        linkFields.append(LinkInfo(imageName: "webLink", placeholder: "Website Link"))
+        profilevalidation.AdditionalLink.append("")
         tableView.reloadSections(
             IndexSet(integer: ProfileSection.visitLinks.rawValue),
-            with: .automatic
+            with: .none
         )
     }
     
+    
+    private func setupLoader() {
+        loader.color = .white
+        loader.hidesWhenStopped = true
+        loader.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(loader)
+
+        NSLayoutConstraint.activate([
+            loader.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loader.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
     
 }
 

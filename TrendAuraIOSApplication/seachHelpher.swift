@@ -274,8 +274,8 @@ let cardItems :  [CardItem] = [
 enum SearchCategory {
      case all
      case users
-    case   promos
-    case hashtags
+     case   promos
+     case hashtags
 }
 
 

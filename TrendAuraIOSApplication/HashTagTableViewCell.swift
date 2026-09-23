@@ -21,9 +21,9 @@ class HashTagTableViewCell: UITableViewCell {
         selectionStyle = .none
     }
     
-    func configure(with hashTag : HashTagModel){
-        hashTagImageView.image = UIImage(named: "hashTag")
-        hashTagLabel.text = hashTag.hashNmae
-        promosLabel.text = hashTag.promos
+    func configure(with hashTag : SearchHashtag){
+        hashTagImageView.loadImage(from: hashTag.profilePic, placeholder: UIImage(named: "hashTag"))
+        hashTagLabel.text = hashTag.tag
+        promosLabel.text = "1.5k Promos"
     }
 }

@@ -20,16 +20,19 @@ class SignUpViewController: UIViewController, UITableViewDataSource, UITableView
     
     
     
-    struct SignUpForm {
-        var name = ""
-        var email = ""
-        var password = ""
-        var confirmPassword = ""
-    }
-
-    var form = SignUpForm()
+//    struct SignUpForm {
+//        var name = ""
+//        var email = ""
+//        var password = ""
+//        var confirmPassword = ""
+//    }
+//
+//    var form = SignUpForm()
+//    
+//    var  isTermsAccepted = false
     
-    var  isTermsAccepted = false
+    let viewModel = SignUpViewModel()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +61,33 @@ class SignUpViewController: UIViewController, UITableViewDataSource, UITableView
         
         tap.cancelsTouchesInView = false
             view.addGestureRecognizer(tap)
+        
+        
+        //MVVM
+        viewModel.onError = {[weak self ] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onLoadingChnaged = {[weak self ] isLoading in
+        
+            self?.signUpButton.isEnabled = !isLoading
+        }
+        
+        viewModel.onOTPSent = { [weak self] in
+            guard let self = self else { return }
+            let vc = self.storyboard?.instantiateViewController(withIdentifier: "CodeVerificationViewController") as! CodeVerificationViewController
+            
+                vc.viewModel.name = self.viewModel.name
+                vc.viewModel.email = self.viewModel.email
+                vc.viewModel.password = self.viewModel.password
+            
+            let nav = UINavigationController(rootViewController: vc)
+            nav.modalPresentationStyle = .overFullScreen
+            nav.modalTransitionStyle = .crossDissolve
+            nav.setNavigationBarHidden(true, animated: false)
+            self.present(nav, animated: true)
+        }
+        
     }
     
     @objc
@@ -114,9 +144,13 @@ class SignUpViewController: UIViewController, UITableViewDataSource, UITableView
             
             cell.configuration()
             
+//            cell.checkBoxChanged = { [weak self] value in
+//
+//                self?.isTermsAccepted = value
+//            }
+            
             cell.checkBoxChanged = { [weak self] value in
-
-                self?.isTermsAccepted = value
+                self?.viewModel.isTermsAccepted = value
             }
             
             return cell
@@ -146,22 +180,32 @@ class SignUpViewController: UIViewController, UITableViewDataSource, UITableView
 
                 cell.configure(data: data)
             
+//            cell.textChanged = { [weak self] text in
+//                guard let self = self else { return }
+//
+//                switch data.fieldType {
+//
+//                case .name:
+//                    self.form.name = text
+//
+//                case .email:
+//                    self.form.email = text
+//
+//                case .password:
+//                    self.form.password = text
+//
+//                case .confirmPassword:
+//                    self.form.confirmPassword = text
+//                }
+//            }
+            
             cell.textChanged = { [weak self] text in
                 guard let self = self else { return }
-
                 switch data.fieldType {
-
-                case .name:
-                    self.form.name = text
-
-                case .email:
-                    self.form.email = text
-
-                case .password:
-                    self.form.password = text
-
-                case .confirmPassword:
-                    self.form.confirmPassword = text
+                case .name: self.viewModel.name = text
+                case .email: self.viewModel.email = text
+                case .password: self.viewModel.password = text
+                case .confirmPassword: self.viewModel.confirmPassword = text
                 }
             }
 
@@ -184,56 +228,56 @@ class SignUpViewController: UIViewController, UITableViewDataSource, UITableView
     
     @IBAction func signUpButtonTapped(_ sender: UIButton) {
         
-        guard !form.name.isBlank() else {
-            show_Alert(message: "Please enter name.")
-            return
-        }
-
-        guard form.name.isValidName() else {
-            show_Alert(message: "Name must be at least 3 characters.")
-            return
-        }
+//        guard !form.name.isBlank() else {
+//            show_Alert(message: "Please enter name.")
+//            return
+//        }
+//
+//        guard form.name.isValidName() else {
+//            show_Alert(message: "Name must be at least 3 characters.")
+//            return
+//        }
+//        
+//        guard !form.email.isBlank() else {
+//            show_Alert(message: "Please enter your email.")
+//            return
+//        }
+//        
+//        guard form.email.isValidEmail() else{
+//            show_Alert(message: "Please enter a valid email address.")
+//            return
+//        }
+//        
+//        guard !form.password.isBlank() else {
+//            show_Alert(message: "Please enter password.")
+//            return
+//        }
+//
+//        guard form.password.isValidPassword() else {
+//            show_Alert(message: "Password must be at least 8 characters.")
+//            return
+//        }
+//        
+//        guard !form.confirmPassword.isBlank() else {
+//            show_Alert(message: "Please confirm your password.")
+//            return
+//        }
+//        
+//        guard form.password == form.confirmPassword else {
+//            show_Alert(message: "Passwords do not match.")
+//            return
+//        }
+//        
+//        guard isTermsAccepted else {
+//            show_Alert(message: "Please accept Terms & Conditions.")
+//            return
+//        }
         
-        guard !form.email.isBlank() else {
-            show_Alert(message: "Please enter your email.")
-            return
-        }
-        
-        guard form.email.isValidEmail() else{
-            show_Alert(message: "Please enter a valid email address.")
-            return
-        }
-        
-        guard !form.password.isBlank() else {
-            show_Alert(message: "Please enter password.")
-            return
-        }
-
-        guard form.password.isValidPassword() else {
-            show_Alert(message: "Password must be at least 8 characters.")
-            return
-        }
-        
-        guard !form.confirmPassword.isBlank() else {
-            show_Alert(message: "Please confirm your password.")
-            return
-        }
-        
-        guard form.password == form.confirmPassword else {
-            show_Alert(message: "Passwords do not match.")
-            return
-        }
-        
-        guard isTermsAccepted else {
-            show_Alert(message: "Please accept Terms & Conditions.")
-            return
-        }
-        
-        let CodeVerificationViewControllerVC = storyboard?.instantiateViewController(withIdentifier: "CodeVerificationViewController") as! CodeVerificationViewController
+//        let CodeVerificationViewControllerVC = storyboard?.instantiateViewController(withIdentifier: "CodeVerificationViewController") as! CodeVerificationViewController
         
 //        navigationController?.pushViewController(CodeVerificationViewControllerVC, animated: true)
         
-        let nav = UINavigationController(rootViewController: CodeVerificationViewControllerVC)
+//        let nav = UINavigationController(rootViewController: CodeVerificationViewControllerVC)
 
         
 //        CodeVerificationViewControllerVC.modalPresentationStyle = .overFullScreen
@@ -241,14 +285,14 @@ class SignUpViewController: UIViewController, UITableViewDataSource, UITableView
 //        
 //        self.present(CodeVerificationViewControllerVC, animated: true)
         
-        nav.modalPresentationStyle = .overFullScreen
-        nav.modalTransitionStyle = .crossDissolve
-
-        nav.setNavigationBarHidden(true, animated: false)
+//        nav.modalPresentationStyle = .overFullScreen
+//        nav.modalTransitionStyle = .crossDissolve
+//
+//        nav.setNavigationBarHidden(true, animated: false)
+//        
+//        present(nav, animated: true)
         
-        present(nav, animated: true)
-        
-        
+        viewModel.signUpTapped()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

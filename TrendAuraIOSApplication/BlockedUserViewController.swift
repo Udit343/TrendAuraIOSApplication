@@ -13,7 +13,9 @@ class BlockedUserViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var searchTextField : UITextField!
     @IBOutlet weak var tableView : UITableView!
     
-    var Users = allUsers
+    
+    
+    let viewModel = BlockedUserViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,12 +34,22 @@ class BlockedUserViewController: UIViewController, UITableViewDelegate, UITableV
         
         tableView.dataSource = self
         tableView.delegate = self
+        
+        viewModel.onError = {[weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onUserLoaded = {[weak self] in
+            self?.tableView.reloadData()
+        }
+        
+        viewModel.fetchAllUser()
 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return allUsers.count
+        return viewModel.Users.count
     }
     
     func tableView(
@@ -49,22 +61,23 @@ class BlockedUserViewController: UIViewController, UITableViewDelegate, UITableV
             withIdentifier: "BlockedUserTableViewCell",
             for: indexPath
         ) as! BlockedUserTableViewCell
-
-        cell.configure(with: Users[indexPath.row])
+        
+        let user = viewModel.Users[indexPath.row]
+        
+        cell.configure(with: user)
 
         cell.onBlockedButtonTapped = { [weak self, weak cell] in
+                    guard let self = self, let cell = cell else { return }
 
-            guard let self = self,
-                  let cell = cell else { return }
+                    self.viewModel.toggleBlock(at: indexPath.row) { success in
+                        DispatchQueue.main.async {
+                            if success {
+                                cell.updateButtonUI(isBlocked: self.viewModel.Users[indexPath.row].isBlocked)
+                            }
+                        }
+                    }
+                }
 
-            
-            self.Users[indexPath.row].isBlocked.toggle()
-
-            
-            cell.updateButtonUI(
-                isBlocked: self.Users[indexPath.row].isBlocked
-            )
-        }
 
         return cell
     }

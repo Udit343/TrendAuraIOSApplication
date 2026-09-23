@@ -26,11 +26,29 @@ class ChatTableViewCell: UITableViewCell {
 
     }
 
-    func configure(with person : chatPeople){
-        profileImage.image = UIImage(named: person.imageNmae)
-        nameLable.text = person.name
-        descriptioLabel.text = person.message
-        dateLabel.text = person.date
-    }
+//    func configure(with person : ){
+//        profileImage.image = UIImage(named: person.imageNmae)
+//        nameLable.text = person.name
+//        descriptioLabel.text = person.message
+//        dateLabel.text = person.date
+//    }
+    
+    func configure(with person: AppUser) {
+            if let imageName = person.imageName {
+                profileImage.image = UIImage(named: imageName)
+            } else {
+                profileImage.image = UIImage(named: "chat1") // fallback placeholder in your asset catalog
+            }
+            nameLable.text = person.name
+            descriptioLabel.text = person.lastMessage ?? "Say hi"
+
+            if let timestamp = person.lastMessageTimestamp {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "h:mm a"
+                dateLabel.text = formatter.string(from: timestamp)
+            } else {
+                dateLabel.text = ""
+            }
+        }
     
 }

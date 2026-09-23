@@ -14,10 +14,14 @@ class storesCollectionViewCell: UICollectionViewCell {
          super.awakeFromNib()
         
         storeName.font = UIFont.Outfit_Regular(size: 10)
+        
+        storeImageView.layer.cornerRadius = 16 * screenHeightFactor
+        storeImageView.clipsToBounds = true
+        
     }
     
     func configure(with item: StoreItem) {
-            storeImageView.image = UIImage(named: item.image)
+        storeImageView.loadImage(from: item.image, placeholder: UIImage(named: "nikeLogo"))
             storeName.text = item.name
     }
 }

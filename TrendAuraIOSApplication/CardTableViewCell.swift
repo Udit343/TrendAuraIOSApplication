@@ -7,12 +7,13 @@ import UIKit
 
 class CardTableViewCell: UITableViewCell, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
-    
+
     
     @IBOutlet weak var collectionView : UICollectionView!
     
     private var products : [ProductItem] = []
     
+    var onCartToggle: ((ProductItem, Bool, @escaping (Bool) -> Void) -> Void)?
     
     
     override func awakeFromNib() {
@@ -20,7 +21,6 @@ class CardTableViewCell: UITableViewCell, UICollectionViewDelegateFlowLayout, UI
         
         collectionView.delegate = self
         collectionView.dataSource = self
-        
         selectionStyle = .none
         
     }
@@ -42,24 +42,19 @@ class CardTableViewCell: UITableViewCell, UICollectionViewDelegateFlowLayout, UI
         let product = products[indexPath.item]
         
         cell.configure(with: product)
+        
+        cell.onCartToggle = {[weak self] currentlyFavourite , completion in
+            self?.onCartToggle?(product, currentlyFavourite,completion)
+        }
     
         return cell
     }
+
     
     func collectionView(_ collectionView: UICollectionView,
                             layout collectionViewLayout: UICollectionViewLayout,
                             sizeForItemAt indexPath: IndexPath) -> CGSize {
-
-//        return CGSize(width: contentView.frame.height * 0.54, height: contentView.frame.height)
         
         return CGSize(width: screenHeightFactor * 116, height: screenHeightFactor * 240)
 }
-    
-    var didSelectCollectionItem: ((IndexPath) -> Void)?
-
-       func collectionView(_ collectionView: UICollectionView,
-                           didSelectItemAt indexPath: IndexPath) {
-
-           didSelectCollectionItem?(indexPath)
-       }
 }

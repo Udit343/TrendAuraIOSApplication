@@ -5,6 +5,7 @@
 
 import UIKit
 
+
 class LogInViewController: UIViewController {
     @IBOutlet weak var passwordLabel: UILabel!
     
@@ -28,6 +29,8 @@ class LogInViewController: UIViewController {
     @IBOutlet weak var backGroundImageView: UIImageView!
     
     var isPasswordVisible = false
+    
+    let viewModel = LogInViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,6 +90,29 @@ class LogInViewController: UIViewController {
                 UIColor(hex: "FF5ACD")
             ],
         )
+        
+        viewModel.onError = {[weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onLoadingChanged = {[weak self] isLoding in
+            self?.logInButton.isEnabled = !isLoding
+        }
+        
+        viewModel.onLogInSuccess = {[weak self] in
+        
+            guard let self = self else {return}
+            
+            let tabBarVC = storyboard?.instantiateViewController(
+                withIdentifier: "TabBarController"
+            ) as! TabBarController
+
+            navigationController?.pushViewController(
+                tabBarVC,
+                animated: true
+            )
+        }
+        
     }
 
     override func viewDidLayoutSubviews() {
@@ -142,39 +168,44 @@ class LogInViewController: UIViewController {
     
     @IBAction func loginButtonTapped(_ sender: UIButton) {
 
+        viewModel.email = emailTextField.text ?? ""
+        viewModel.password = passwordTextField.text ?? ""
         
-            guard !emailTextField.isEmpty() else {
-                show_Alert(message: "Please enter your email.")
-                return
-            }
-
-            guard emailTextField.isValidEmail() else {
-                show_Alert(message: "Please enter a valid email address.")
-                return
-            }
-
-            guard !passwordTextField.isEmpty() else {
-                show_Alert(message: "Please enter your password.")
-                return
-            }
-
-            guard passwordTextField.isValidPassword() else {
-                show_Alert(message: "Password must be at least 8 characters.")
-                return
-            }
+        viewModel.logInTapped()
+        
+        
+//            guard !emailTextField.isEmpty() else {
+//                show_Alert(message: "Please enter your email.")
+//                return
+//            }
+//
+//            guard emailTextField.isValidEmail() else {
+//                show_Alert(message: "Please enter a valid email address.")
+//                return
+//            }
+//
+//            guard !passwordTextField.isEmpty() else {
+//                show_Alert(message: "Please enter your password.")
+//                return
+//            }
+//
+//            guard passwordTextField.isValidPassword() else {
+//                show_Alert(message: "Password must be at least 8 characters.")
+//                return
+//            }
         
 //        let  exploreVC = storyboard?.instantiateViewController(withIdentifier: "ExploreViewController") as! ExploreViewController
 //        
 //        navigationController?.pushViewController(exploreVC, animated: true)
         
-        let tabBarVC = storyboard?.instantiateViewController(
-            withIdentifier: "TabBarController"
-        ) as! TabBarController
-
-        navigationController?.pushViewController(
-            tabBarVC,
-            animated: true
-        )
+//        let tabBarVC = storyboard?.instantiateViewController(
+//            withIdentifier: "TabBarController"
+//        ) as! TabBarController
+//
+//        navigationController?.pushViewController(
+//            tabBarVC,
+//            animated: true
+//        )
     }
     
     @IBAction func signUpPage(_ sender : UIButton){
@@ -190,5 +221,4 @@ class LogInViewController: UIViewController {
         navigationController?.pushViewController(forgotPage, animated: true)
         
     }
-    
 }

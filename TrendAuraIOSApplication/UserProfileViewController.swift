@@ -6,7 +6,7 @@
 import UIKit
 
 class UserProfileViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    
+
     @IBOutlet weak var backgroundImageView : UIImageView!
     @IBOutlet weak var  backgroundHeaderView : UIImageView!
     @IBOutlet weak var  bellButton : UIButton!
@@ -45,9 +45,11 @@ class UserProfileViewController: UIViewController, UITableViewDataSource, UITabl
     
     @IBOutlet weak var tabelView : UITableView!
     
-    
-    
     var removeCard : (()->Void)?
+    
+    let viewModel = UserProfileViewModel()
+    
+    private var reels: [FavouriteReelItem] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,7 +57,7 @@ class UserProfileViewController: UIViewController, UITableViewDataSource, UITabl
         myStoreOuterView.layer.cornerRadius = screenHeightFactor * 19
         mycartOuterView.layer.borderWidth = 1
         mycartOuterView.layer.borderColor = UIColor.white.cgColor
-        mycartOuterView.layer.cornerRadius = screenHeightFactor * 12.2
+        mycartOuterView.layer.cornerRadius =  20
         
         nameLabel.font = UIFont.Outfit_SemiBold(size: 22)
         subNameLabel.font = UIFont.Outfit_Medium(size: 14)
@@ -72,7 +74,7 @@ class UserProfileViewController: UIViewController, UITableViewDataSource, UITabl
         followingCount.font = UIFont.Manrope_Bold(size: 14)
         followingLabel.font =  UIFont.Manrope_Bold(size: 10)
         
-        descriptionLabel.font = UIFont.Outfit_Light(size: 10)
+        descriptionLabel.font = UIFont.Outfit_Light(size: 11)
         
         mycartLabel.font = UIFont.Outfit_Medium(size: 12)
         
@@ -84,6 +86,29 @@ class UserProfileViewController: UIViewController, UITableViewDataSource, UITabl
 //        tabelView.rowHeight = UITableView.automaticDimension
 //        tabelView.estimatedRowHeight = 500
         
+        viewModel.onError = {[weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onProfileLoaded = {[weak self] in
+            self?.updateUI()
+        }
+        
+        viewModel.onCartLoaded = { [weak self] in
+                 guard let self = self else { return }
+            
+                self.reels = self.viewModel.cartReels
+                self.tabelView.reloadData()
+        }
+        
+//        viewModel.fetchProfile()
+    }
+    
+    
+    override func viewWillAppear(_ animated: Bool) {
+             super.viewWillAppear(animated)
+             viewModel.fetchProfile()
+             viewModel.fetchCartReels()
     }
     
     override func viewDidLayoutSubviews() {
@@ -112,6 +137,39 @@ class UserProfileViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     
+    func updateUI(){
+        
+        guard let profile = viewModel.profile else {return}
+        
+        nameLabel.text = profile.name
+        subNameLabel.text = profile.userName
+        descriptionLabel.text = profile.about.isEmpty ? "No bio Added yet" : profile.about
+        
+        likesCountLabel.text = "\(profile.totalLikes)"
+        followersCount.text = "\(profile.totalFollowers)"
+        followingCount.text = "\(profile.totalFollowing)"
+        cartCount.text = "\(profile.totalReelCart)"
+        
+        
+        
+        //Photo
+        if !profile.profilePic.isEmpty , let url = URL(string: profile.profilePic){
+            loadImage(from : url , into : nameImage)
+        }
+        
+        func loadImage(from url : URL , into imageView : UIImageView){
+            URLSession.shared.dataTask(with: url) { data, _, _ in
+                        guard let data = data, let image = UIImage(data: data) else { return }
+                        DispatchQueue.main.async {
+                            imageView.image = image
+                        }
+                    }.resume()
+        }
+        
+        
+    }
+    
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
@@ -122,13 +180,41 @@ class UserProfileViewController: UIViewController, UITableViewDataSource, UITabl
     
         cell.layoutIfNeeded()
         
-        cell.removeCard = {[weak self] in
+        cell.configure(with: reels )
         
-            self?.myCard()
+        cell.removeCard = { [weak self] reelId in
+            self?.confirmRemove(reelId: reelId)
         }
         
         
         return cell
+    }
+    
+    
+    func confirmRemove(reelId: Int) {
+        guard let reel = viewModel.cartReels.first(where: { $0.reelId == reelId }) else { return }
+        
+        let cartVC = storyboard?.instantiateViewController(withIdentifier: "MyCartViewController") as! MyCartViewController
+        cartVC.favouriteReel = reel
+        
+        cartVC.OnRemoveTapped = { [weak self, weak cartVC] in
+            self?.viewModel.removeFromCart(reelId: reelId) { success, message in
+                DispatchQueue.main.async {
+                    cartVC?.dismiss(animated: true) {
+                        self?.show_Alert(message: message)
+                        if success {
+                            self?.tabelView.reloadData()
+                        }
+                    }
+                }
+            }
+        }
+        
+        let nav = UINavigationController(rootViewController: cartVC)
+        nav.modalPresentationStyle = .overFullScreen
+        nav.modalTransitionStyle = .crossDissolve
+        present(nav, animated: true)
+        
     }
     
     @IBAction func settingPage(_ sender : UIButton){
@@ -165,9 +251,13 @@ class UserProfileViewController: UIViewController, UITableViewDataSource, UITabl
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        let rowSpacing = 5 *  6
-        
-        return  (270 * screenHeightFactor) * 5 + CGFloat(rowSpacing) ;
+        let rows = ceil(Double(reels.count) / 2.0)
+
+        let rowHeight = 270 * screenHeightFactor
+        let rowSpacing = 6 * screenHeightFactor
+
+        return CGFloat(rows) * rowHeight
+               + CGFloat(max(0, Int(rows) - 1)) * rowSpacing
         
     }
     

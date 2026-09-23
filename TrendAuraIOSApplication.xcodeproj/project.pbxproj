@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		715D89B63063A9D000B35D7F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 715D89B53063A9D000B35D7F /* FirebaseAuth */; };
+		71F9464730628C5B002B2182 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 71F9464630628C5B002B2182 /* FirebaseFirestore */; };
+		71F9464930628C5B002B2182 /* FirebaseFirestoreCombine-Community in Frameworks */ = {isa = PBXBuildFile; productRef = 71F9464830628C5B002B2182 /* FirebaseFirestoreCombine-Community */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		7136AE90300DBF2000E22AC7 /* TrendAuraIOSApplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrendAuraIOSApplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71F9464730628C5B002B2182 /* FirebaseFirestore in Frameworks */,
+				715D89B63063A9D000B35D7F /* FirebaseAuth in Frameworks */,
+				71F9464930628C5B002B2182 /* FirebaseFirestoreCombine-Community in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +55,7 @@
 			isa = PBXGroup;
 			children = (
 				7136AE92300DBF2000E22AC7 /* TrendAuraIOSApplication */,
+				715D89B43063A9D000B35D7F /* Frameworks */,
 				7136AE91300DBF2000E22AC7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +66,13 @@
 				7136AE90300DBF2000E22AC7 /* TrendAuraIOSApplication.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		715D89B43063A9D000B35D7F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,6 +95,9 @@
 			);
 			name = TrendAuraIOSApplication;
 			packageProductDependencies = (
+				71F9464630628C5B002B2182 /* FirebaseFirestore */,
+				71F9464830628C5B002B2182 /* FirebaseFirestoreCombine-Community */,
+				715D89B53063A9D000B35D7F /* FirebaseAuth */,
 			);
 			productName = TrendAuraIOSApplication;
 			productReference = 7136AE90300DBF2000E22AC7 /* TrendAuraIOSApplication.app */;
@@ -107,6 +127,9 @@
 			);
 			mainGroup = 7136AE87300DBF2000E22AC7;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				71F9464530628C5B002B2182 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7136AE91300DBF2000E22AC7 /* Products */;
 			projectDirPath = "";
@@ -341,6 +364,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		71F9464530628C5B002B2182 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.19.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		715D89B53063A9D000B35D7F /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 71F9464530628C5B002B2182 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		71F9464630628C5B002B2182 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 71F9464530628C5B002B2182 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		71F9464830628C5B002B2182 /* FirebaseFirestoreCombine-Community */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 71F9464530628C5B002B2182 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = "FirebaseFirestoreCombine-Community";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7136AE88300DBF2000E22AC7 /* Project object */;
 }

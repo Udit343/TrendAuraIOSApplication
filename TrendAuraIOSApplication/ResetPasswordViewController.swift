@@ -26,6 +26,8 @@ class ResetPasswordViewController: UIViewController {
     
     var isConfirmPasswordVisible = false
     
+    let viewModel = ForgotNewPasswordViewModel()
+    
     
     
     override func viewDidLoad() {
@@ -63,6 +65,32 @@ class ResetPasswordViewController: UIViewController {
         passwordTextField.isSecureTextEntry = true
         confirmpasswordTextField.isSecureTextEntry = true
         
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        
+        view.addGestureRecognizer(tapGesture)
+        
+        viewModel.onLoadingChnaged = {[weak self] isLoading in
+            self?.continueButton.isEnabled = !isLoading
+        }
+        
+        viewModel.onError = {[weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onPasswordChangeSuccess = {[weak self] in
+            guard let self = self else {return }
+            
+            let gotoSuccPage = storyboard?.instantiateViewController(withIdentifier: "ResetPasswordChangedSuccViewController") as! ResetPasswordChangedSuccViewController
+            
+            navigationController?.pushViewController(gotoSuccPage, animated: true)
+        }
+        
+    }
+    
+    @objc
+    func hideKeyboard(){
+        view.endEditing(true)
     }
     
     override func viewDidLayoutSubviews() {
@@ -85,37 +113,39 @@ class ResetPasswordViewController: UIViewController {
     
     
     @IBAction func contiueButtonTapped(_ sender : UIButton){
+        
+        viewModel.newPassword = passwordTextField.text ?? ""
+        viewModel.confirmPassword = confirmpasswordTextField.text ?? ""
+        viewModel.continueTapped()
               
-        guard !passwordTextField.isEmpty() else{
-            show_Alert(message: "Fill Password")
-            return
-        }
-        
-        guard passwordTextField.isValidPassword() else{
-            show_Alert(message: "Fill Valid password")
-            return
-        }
-        
-        guard !confirmpasswordTextField.isEmpty() else{
-            show_Alert(message: "Fill exact samePassword")
-            return
-        }
-        
-        guard confirmpasswordTextField.isValidPassword() else{
-            show_Alert(message: "Fill Valid Password")
-            return
-        }
-        
-        guard passwordTextField.text == confirmpasswordTextField.text else {
-            show_Alert(message: "Fill Exact same Password")
-            return
-        }
-        
-        let gotoSuccPage = storyboard?.instantiateViewController(withIdentifier: "ResetPasswordChangedSuccViewController") as! ResetPasswordChangedSuccViewController
-        
-        navigationController?.pushViewController(gotoSuccPage, animated: true)
-        
-        
+//        guard !passwordTextField.isEmpty() else{
+//            show_Alert(message: "Fill Password")
+//            return
+//        }
+//        
+//        guard passwordTextField.isValidPassword() else{
+//            show_Alert(message: "Fill Valid password")
+//            return
+//        }
+//        
+//        guard !confirmpasswordTextField.isEmpty() else{
+//            show_Alert(message: "Fill exact samePassword")
+//            return
+//        }
+//        
+//        guard confirmpasswordTextField.isValidPassword() else{
+//            show_Alert(message: "Fill Valid Password")
+//            return
+//        }
+//        
+//        guard passwordTextField.text == confirmpasswordTextField.text else {
+//            show_Alert(message: "Fill Exact same Password")
+//            return
+//        }
+//        
+//        let gotoSuccPage = storyboard?.instantiateViewController(withIdentifier: "ResetPasswordChangedSuccViewController") as! ResetPasswordChangedSuccViewController
+//        
+//        navigationController?.pushViewController(gotoSuccPage, animated: true)
     }
     
     
@@ -130,7 +160,7 @@ class ResetPasswordViewController: UIViewController {
         
         passwordTextField.isSecureTextEntry = !isPasswordVisible
         
-        let imagePassword = isPasswordVisible ? "hidePassword" : "showPassword"
+        let imagePassword = isPasswordVisible ? "showPassword" : "hidePassword"
         
         passwordButton.setImage(UIImage(named: imagePassword), for: .normal)
     }
@@ -142,8 +172,8 @@ class ResetPasswordViewController: UIViewController {
         confirmpasswordTextField.isSecureTextEntry = !isConfirmPasswordVisible
         
         let imageConfirmPassword = isConfirmPasswordVisible
-            ? "hidePassword"
-            : "showPassword"
+            ? "showPassword"
+            : "hidePassword"
         
         confirmpasswordButton.setImage(UIImage(named: imageConfirmPassword), for: .normal)
     }

@@ -49,7 +49,7 @@ class UserProfileCollectionViewCell: UICollectionViewCell {
         super.awakeFromNib()
         
         addedView.layer.cornerRadius = 5 * screenHeightFactor
-        visitOuterView.layer.cornerRadius = 17 * screenHeightFactor
+        visitOuterView.layer.cornerRadius = 14.5 * screenHeightFactor
         
         removeOuterView.layer.cornerRadius =  10 * screenHeightFactor
         
@@ -81,6 +81,10 @@ class UserProfileCollectionViewCell: UICollectionViewCell {
 //        visitCountOuterView.clipsToBounds = true
 //        visitCountOuterView.layer.masksToBounds = true
         
+        profileImage.layer.cornerRadius = 12 * screenHeightFactor
+        
+        cardImage.layer.cornerRadius = 6 * screenHeightFactor
+        
         
     }
     
@@ -89,7 +93,7 @@ class UserProfileCollectionViewCell: UICollectionViewCell {
         
 //        visitCountOuterView.layer.sublayers?.removeAll {
 //                $0.name == "GradientBorder"
-//            }
+
         
         addedView.applyGradientBorder(
             colors: [
@@ -110,10 +114,11 @@ class UserProfileCollectionViewCell: UICollectionViewCell {
                 UIColor(hex: "C850C0"),
                 UIColor(hex: "4C57CF")
             ],
-            borderWidth: 2,
+            borderWidth: 1.2,
             startPoint: CGPoint(x: 1, y: 0),
             endPoint: CGPoint(x: 0, y: 1)
         )
+        
         
         removeOuterView.applyGradientBackground(colors: [
             UIColor(hex: "FFCC70"),
@@ -123,6 +128,18 @@ class UserProfileCollectionViewCell: UICollectionViewCell {
         startPoint: CGPoint(x: 1, y: 0),
         endPoint: CGPoint(x: 0, y: 1)
         )
+    }
+    
+    func configure(with item: ProductItem, addedDate: String) { 
+        cardImage.loadImage(from: item.productImage, placeholder: UIImage(named: "cardImage"))
+        profileImage.loadImage(from: item.profileImage, placeholder: UIImage(named: "cardProfileImage"))
+        profileLabel.text = item.profileName
+        cardTitle.text = item.title
+        cardSubTitle.text = item.subTitle
+        visitLabel.text = item.visitCount
+        visitCountLabel.text = item.visitCount
+        likeLabel.text = item.likeCount
+        addedLabel.text = addedDate.isEmpty ? "Added" : "Added \(addedDate)"
     }
     
     @IBAction func removeCard(_ sender : UIButton){

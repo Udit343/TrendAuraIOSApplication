@@ -43,13 +43,13 @@ class ProfileEditNameTableViewCell: UITableViewCell {
         )
 
         if isDatePicker {
-            setupDatePicker()
+            setupDatePicker(with: text)
         } else {
             nameTextField.inputView = nil
             nameTextField.inputAccessoryView = nil
         }
     }
-    private func setupDatePicker() {
+    private func setupDatePicker(with existingValue : String) {
 
         datePicker.datePickerMode = .date
 
@@ -58,6 +58,10 @@ class ProfileEditNameTableViewCell: UITableViewCell {
         }
 
         datePicker.maximumDate = Date()
+        
+        if let existingDate = parseDate(existingValue) {
+                datePicker.date = existingDate
+            }
 
         nameTextField.inputView = datePicker
 
@@ -82,6 +86,22 @@ class ProfileEditNameTableViewCell: UITableViewCell {
 
         nameTextField.inputAccessoryView = toolbar
     }
+    
+    private func parseDate(_ value: String) -> Date? {
+        guard !value.isEmpty, value != "0000-00-00" else { return nil }
+
+        let formats = ["dd/MM/yyyy", "yyyy-MM-dd", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"]
+
+        for format in formats {
+            let formatter = DateFormatter()
+            formatter.dateFormat = format
+            formatter.timeZone = TimeZone(identifier: "UTC")
+            if let date = formatter.date(from: value) {
+                return date
+            }
+        }
+        return nil
+    }
 
     @objc func textChanged() {
         didChangedText?(nameTextField.text ?? "")
@@ -90,7 +110,7 @@ class ProfileEditNameTableViewCell: UITableViewCell {
     @objc func dateChanged() {
 
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd/MM/yyyy"
+        formatter.dateFormat = "yyyy-MM-dd"
 
         let date = formatter.string(from: datePicker.date)
 

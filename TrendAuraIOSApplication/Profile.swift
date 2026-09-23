@@ -142,70 +142,28 @@ let dobInfo = DateOfBirthInfo(
     placeholder: "DD/MM/YYYY"
 )
 
-var links = [
-
-    LinkInfo(
-        imageName: "webLink",
-        placeholder: "Website Link"
-    ),
-
-    LinkInfo(
-        imageName: "whatsApp",
-        placeholder: "WhatsApp Number"
-    ),
-
-    LinkInfo(
-        imageName: "Email",
-        placeholder: "Contact Email"
-    ),
-
-    LinkInfo(
-        imageName: "faceBook",
-        placeholder: "Facebook Link"
-    ),
-
-    LinkInfo(
-        imageName: "googleMap",
-        placeholder: "Google Map"
-    ),
-
-    LinkInfo(
-        imageName: "twitter",
-        placeholder: "Twitter Link"
-    ),
-
-    LinkInfo(
-        imageName: "youtube",
-        placeholder: "YouTube Link"
-    ),
-
-    LinkInfo(
-        imageName: "insgram",
-        placeholder: "Instagram Link"
-    ),
-
-    LinkInfo(
-        imageName: "tiktok",
-        placeholder: "TikTok Link"
-    ),
-
-    LinkInfo(
-        imageName: "LinkedIn",
-        placeholder: "LinkedIn Link"
-    )
+let defaultLinkFields: [LinkInfo] = [
+    LinkInfo(imageName: "webLink",   placeholder: "Website Link"),
+    LinkInfo(imageName: "whatsApp",  placeholder: "WhatsApp Number"),
+    LinkInfo(imageName: "Email",     placeholder: "Contact Email"),
+    LinkInfo(imageName: "faceBook",  placeholder: "Facebook Link"),
+    LinkInfo(imageName: "googleMap", placeholder: "Google Map"),
+    LinkInfo(imageName: "twitter",   placeholder: "Twitter Link"),
+    LinkInfo(imageName: "youtube",   placeholder: "YouTube Link"),
+    LinkInfo(imageName: "insgram",   placeholder: "Instagram Link"),
+    LinkInfo(imageName: "tiktok",    placeholder: "TikTok Link"),
+    LinkInfo(imageName: "LinkedIn",  placeholder: "LinkedIn Link")
 ]
-
 
 let viewBorderColor = UIColor(hex: "FFFFFF").withAlphaComponent(0.3) as! CGColor
 
 
 
 
-/// for validation and verification
-
+// for validation and verification
 struct PersonalProfileValidation {
        
-       var name : String = ""
+        var name : String = ""
         var username: String = ""
         var about: String = ""
         var state: String = ""
@@ -214,6 +172,7 @@ struct PersonalProfileValidation {
         var dob: String = ""
 
         var links: [String] = []
+        var AdditionalLink: [String] = []
 
         var isTermsAccepted: Bool = false
 }

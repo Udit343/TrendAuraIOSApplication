@@ -31,6 +31,8 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     var selectedCategoryIndex = 0
     
+    var viewModel = SearchViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,7 +41,7 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         searchView.layer.borderColor = UIColor(red: 255, green: 255, blue: 255, alpha: 0.3).cgColor
         searchTextField.borderStyle = .none
         searchTextField.setPlaceholder(
-            text: "@jak",
+            text: " ",
             color: UIColor(hex: "F3F4F8"),
             font: UIFont.Outfit_Regular(size: 14)
         )
@@ -76,13 +78,34 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         descriptionLabel.font = UIFont.Outfit_Light(size: 12)
         
+        searchTextField.addTarget(self, action: #selector(searchTextChanged), for: .editingChanged)
+        
+        viewModel.onError = {[weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onResultsUpdated = {[weak self] in
+            guard let self = self else {return}
+            
+            self.userTableView.reloadData()
+            self.promosCollectionView.reloadData()
+            self.hashTagTableView.reloadData()
+        }
+        
             updateScreen()
+        
+    }
+    
+    @objc func searchTextChanged(){
+        let query = searchTextField.text ?? ""
+        viewModel.search(query: query, category: selectedCategory)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
        if  collectionView ==  promosCollectionView{
-           return cardItems.count
+           return viewModel.promos.count
+           //return cardItems.count
        }else{
            return CategoryName.count
        }
@@ -93,8 +116,18 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         if collectionView ==  promosCollectionView {
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardPromosCollectionViewCell", for: indexPath) as! CardPromosCollectionViewCell
+            
+            let reel = viewModel.promos[indexPath.item]
+            
+            cell.configure(with: reel.toProductItem())
+            
+            let product = reel.toProductItem()
+            
+            cell.onCartToggle = { [weak self] currentlyFavourite, completion in
+                self?.toggleCart(product: product, currentlyFavourite: currentlyFavourite, completion: completion)
+            }
               
-            cell.configure(with: cardItems[indexPath.item])
+           // cell.configure(with: cardItems[indexPath.item])
             
             return cell
         }else{
@@ -114,7 +147,7 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         if collectionView == promosCollectionView {
 
                 return CGSize(
-                    width: 0.47 * promosCollectionView.frame.width ,
+                    width: 0.475 * promosCollectionView.frame.width ,
                     height: 0.64 * promosCollectionView.frame.height
                 )
 
@@ -129,7 +162,7 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         guard collectionView == self.collectionView  else { return}
         
-        let selectedItem = indexPath.item
+        _ = indexPath.item
         
         switch indexPath.item {
         case 0:
@@ -154,6 +187,9 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
         selectedCategoryIndex = indexPath.item
         
         collectionView.reloadData()
+        
+        viewModel.search(query: searchTextField.text ?? "", category: selectedCategory)
+        
     }
     
     
@@ -161,9 +197,9 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if tableView == userTableView {
-                return usersData.count
+            return viewModel.users.count
             } else {
-                return hashTagData.count
+                return viewModel.hashtags.count
             }
         
     }
@@ -177,10 +213,8 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
                     for: indexPath
                 ) as! UsersTableViewCell
 
-                cell.configure(with: usersData[indexPath.row])
-            
-                
-
+               // cell.configure(with: usersData[indexPath.row])
+            cell.configure(with: viewModel.users[indexPath.row])
                 return cell
 
             } else {
@@ -190,7 +224,9 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
                     for: indexPath
                 ) as! HashTagTableViewCell
 
-                cell.configure(with: hashTagData[indexPath.row])
+                //cell.configure(with: hashTagData[indexPath.row])
+                
+                cell.configure(with: viewModel.hashtags[indexPath.row])
 
                 return cell
             }
@@ -232,11 +268,62 @@ class SearchViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     @IBAction func filterPage(_ sender : UIButton){
         
-        let filterVC = storyboard?.instantiateViewController(withIdentifier: "FilterViewController")as! FilterViewController
+        let filterVC = storyboard?.instantiateViewController(withIdentifier: "FilterViewController") as! FilterViewController
+
+//            filterVC.onFiltersApplied = { [weak self] reels in
+//                guard let self = self else { return }
+
+                //self.viewModel.applyFilteredReels(reels)
+//                self.selectedCategory = .promos
+//                self.selectedCategoryIndex = 2
+//                self.updateScreen()
+//                self.collectionView.reloadData()
+//                self.promosCollectionView.reloadData()
+//            }
+
+        filterVC.hostNavigationController = self.navigationController
         
-        filterVC.modalPresentationStyle = .overFullScreen
-        filterVC.modalTransitionStyle = .crossDissolve
-        
-        present(filterVC, animated: true)
+            filterVC.modalPresentationStyle = .overFullScreen
+            filterVC.modalTransitionStyle = .crossDissolve
+            present(filterVC, animated: true)
     }
+    
+    
+    // ExploreViewModel — add this function
+//    func applyFilteredReels(_ reels: [ReelItem]) {
+//        let filteredSection = ExploreSections(type: .reels(
+//            title: "Filtered Results",
+//            items: reels.map { $0.toProductItem() }
+//        ))
+//        self.sections = [filteredSection]
+//    }
+    
+    @IBAction func CancelButtonTapped(_ sender : UIButton){
+        
+        searchTextField.text = ""
+        searchTextField.resignFirstResponder()
+        
+    }
+    
+    
+    func toggleCart(product: ProductItem, currentlyFavourite: Bool, completion: @escaping (Bool) -> Void) {
+        Task {
+            do {
+                let message: String
+                if currentlyFavourite {
+                    let response = try await ExploreService.shared.removeFromCart(reelId: String(product.reelId))
+                    message = response.message
+                } else {
+                    let response = try await ExploreService.shared.addFavouriteReels(reelId: String(product.reelId))
+                    message = response.message
+                }
+                show_Alert(message: message)
+                completion(true)
+            } catch {
+                show_Alert(message: error.localizedDescription)
+                completion(false)
+            }
+        }
+    }
+    
 }

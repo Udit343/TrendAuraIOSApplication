@@ -8,7 +8,8 @@ class UserProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICol
 
     @IBOutlet weak var collectionView : UICollectionView!
     
-    var removeCard : (()->Void)?
+    private var reels: [FavouriteReelItem] = []
+       var removeCard: ((Int) -> Void)?
     
    // @IBOutlet weak var collectionHeight: NSLayoutConstraint!
     
@@ -31,26 +32,32 @@ class UserProfileTableViewCell: UITableViewCell, UICollectionViewDelegate, UICol
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-         return 10
+        return reels.count
         
     }
+    
+    func configure(with reels: [FavouriteReelItem]) {
+            self.reels = reels
+            collectionView.reloadData()
+        }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UserProfileCollectionViewCell", for: indexPath) as! UserProfileCollectionViewCell
         
-        cell.removeCard = {[weak self ] in
+        let reel = reels[indexPath.item]
         
-            self?.removeCard?()
-        }
+        cell.configure(with: reel.toProductItem(), addedDate: reel.formattedAddedDate)
+
+                cell.removeCard = { [weak self] in
+                    self?.removeCard?(reel.reelId)
+                }
+
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let columns: CGFloat = 2
-        let rowSpacing: CGFloat = 8
         
         return CGSize(
             width: 140 * screenWidthFactor ,

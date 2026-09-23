@@ -25,7 +25,7 @@ class CodeVerificationViewController: UIViewController {
     @IBOutlet weak var backgroundImageView: UIImageView!
     
     
-    
+    let viewModel = CodeVerificationViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,6 +48,25 @@ class CodeVerificationViewController: UIViewController {
         tapGesture.cancelsTouchesInView = false
         
         navigationController?.navigationBar.isHidden = true
+        
+        
+        viewModel.onError = {[weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onLoadingChnaged = {[weak self] isLoading in
+            self?.continueButton.isEnabled = !isLoading
+        }
+        
+        
+        viewModel.onSignUpSuccess = {[weak self] in
+        
+            guard let self = self else {return}
+            let tabBarVC = storyboard?.instantiateViewController(identifier: "TabBarController") as! TabBarController
+            navigationController?.pushViewController(tabBarVC, animated: true)
+        }
+        
+        subTitleLabel.text = "We’ve sent you a four digit code to  info@agicent.com"
     }
     
     override func viewDidLayoutSubviews() {
@@ -126,6 +145,13 @@ class CodeVerificationViewController: UIViewController {
             )
             return
         }
+        
+        guard let otpNumber = Int(otp) else {
+             show_Alert(message: "Invalid OTP")
+             return
+        }
+        
+        viewModel.continueTapped(otp: otpNumber)
 
         
 
@@ -135,16 +161,16 @@ class CodeVerificationViewController: UIViewController {
 //
 //        navigationController?.pushViewController(exploreVC, animated: true)
         
-        let tabBarVC = storyboard?.instantiateViewController(
-        withIdentifier: "TabBarController"
-    ) as! TabBarController
-        
-        print(navigationController)
-
-    navigationController?.pushViewController(
-        tabBarVC,
-        animated: true
-    )
+//        let tabBarVC = storyboard?.instantiateViewController(
+//        withIdentifier: "TabBarController"
+//    ) as! TabBarController
+//        
+//        print(navigationController)
+//
+//    navigationController?.pushViewController(
+//        tabBarVC,
+//        animated: true
+//    )
         
     }
     
@@ -155,13 +181,17 @@ class CodeVerificationViewController: UIViewController {
         verifyOTP()
     }
     
+    
+    @IBAction func resendButtonTapped(_ sender : UIButton){
+        viewModel.resendTapped()
+    }
+    
     override func touchesBegan(
         _ touches: Set<UITouch>,
         with event: UIEvent?
     ) {
 
         view.endEditing(true)
-
         super.touchesBegan(touches, with: event)
     }
     
@@ -172,7 +202,6 @@ class CodeVerificationViewController: UIViewController {
 
         
         let location  = sender.location(in: view)
-        
         if !backgroundImageView.frame.contains(location){
             dismiss(animated: true)
         }
@@ -191,11 +220,9 @@ extension CodeVerificationViewController : UITextFieldDelegate {
     
 
         if string.isEmpty {
-
             textField.text = "-"
 
             if textField.tag > 0 {
-
                 otpTextFields[textField.tag-1].becomeFirstResponder()
             }
 
@@ -204,23 +231,19 @@ extension CodeVerificationViewController : UITextFieldDelegate {
 
         guard string.count == 1,
               string.first!.isNumber else {
-
             return false
         }
 
         textField.text = string
 
         if textField.tag < otpTextFields.count-1 {
-
             otpTextFields[textField.tag+1].becomeFirstResponder()
 
         } else {
-
             textField.resignFirstResponder()
 
           //  verifyOTP()
         }
-
         return false
     }
     
@@ -252,6 +275,5 @@ extension CodeVerificationViewController : UITextFieldDelegate {
             UIColor.white.withAlphaComponent(0.2).cgColor
         }
     }
-    
     
 }

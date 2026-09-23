@@ -16,6 +16,7 @@ struct StoreItem {
 }
 
 struct ProductItem {
+    let reelId : Int
     let productImage : String
     let profileImage : String
     let profileName : String
@@ -23,6 +24,7 @@ struct ProductItem {
     let subTitle : String
     let visitCount : String
     let likeCount : String
+    var isFavourite: Bool
 }
 
 
@@ -130,6 +132,8 @@ struct ExploreDummyData {
             productItems: [
 
                 ProductItem(
+                    
+                    reelId: 20,
 
                     productImage: "cardImage",
 
@@ -143,11 +147,14 @@ struct ExploreDummyData {
 
                     visitCount: "10.6k",
 
-                    likeCount: "2.5k Likes"
+                    likeCount: "2.5k Likes",
+                    
+                     isFavourite: true
 
                 ),
 
                 ProductItem(
+                    reelId: 20,
 
                     productImage: "cardImage6",
 
@@ -161,11 +168,14 @@ struct ExploreDummyData {
 
                     visitCount: "15.8k",
 
-                    likeCount: "5.6k Likes"
+                    likeCount: "5.6k Likes",
+                    
+                    isFavourite: true
 
                 ),
                 
                 ProductItem(
+                    reelId: 20,
 
                     productImage: "cardImage",
 
@@ -179,12 +189,14 @@ struct ExploreDummyData {
 
                     visitCount: "10.6k",
 
-                    likeCount: "2.5k Likes"
+                    likeCount: "2.5k Likes",
+                    
+                    isFavourite: true
 
                 ),
                 
                 ProductItem(
-
+                    reelId: 20,
                     productImage: "cardImage6",
 
                     profileImage: "cardProfileImage",
@@ -197,7 +209,9 @@ struct ExploreDummyData {
 
                     visitCount: "15k",
 
-                    likeCount: "5k Likes"
+                    likeCount: "5k Likes",
+                    
+                    isFavourite: true
 
                 ),
 
@@ -207,6 +221,8 @@ struct ExploreDummyData {
 
 
         ExploreSection(
+            
+            
 
             title: "New and Noteworthy",
 
@@ -219,6 +235,7 @@ struct ExploreDummyData {
             productItems: [
 
                 ProductItem(
+                    reelId: 20,
 
                     productImage: "cardImage2",
 
@@ -232,12 +249,15 @@ struct ExploreDummyData {
 
                     visitCount: "12k",
 
-                    likeCount: "3k Likes"
+                    likeCount: "3k Likes",
+                    
+                    isFavourite: true
 
                 ),
 
                 ProductItem(
 
+                    reelId: 20,
                     productImage: "cardImage3",
 
                     profileImage: "cardProfileImage",
@@ -250,11 +270,13 @@ struct ExploreDummyData {
 
                     visitCount: "8k",
 
-                    likeCount: "2k Likes"
+                    likeCount: "2k Likes",
+                    
+                    isFavourite: true
 
                 ),
                 ProductItem(
-
+                    reelId: 20,
                     productImage: "cardImage2",
 
                     profileImage: "cardProfileImage",
@@ -267,11 +289,14 @@ struct ExploreDummyData {
 
                     visitCount: "12k",
 
-                    likeCount: "3k Likes"
+                    likeCount: "3k Likes",
+                    
+                    isFavourite: true
 
                 ),
                 
                 ProductItem(
+                    reelId: 20,
 
                     productImage: "cardImage3",
 
@@ -285,7 +310,9 @@ struct ExploreDummyData {
 
                     visitCount: "8.8k",
 
-                    likeCount: "2.6k Likes"
+                    likeCount: "2.6k Likes",
+                    
+                    isFavourite: true
 
                 ),
 
@@ -308,6 +335,7 @@ struct ExploreDummyData {
             productItems: [
 
                 ProductItem(
+                    reelId: 20,
 
                     productImage: "cardImage4",
 
@@ -321,11 +349,14 @@ struct ExploreDummyData {
 
                     visitCount: "20k",
 
-                    likeCount: "7k"
+                    likeCount: "7k",
+                    
+                    isFavourite: true
 
                 ),
 
                 ProductItem(
+                    reelId: 20,
 
                     productImage: "cardImage5",
 
@@ -339,10 +370,13 @@ struct ExploreDummyData {
 
                     visitCount: "18k",
 
-                    likeCount: "6k"
+                    likeCount: "6k",
+                    
+                    isFavourite: true
 
                 ),
                 ProductItem(
+                    reelId: 20,
 
                     productImage: "cardImage4",
 
@@ -356,11 +390,14 @@ struct ExploreDummyData {
 
                     visitCount: "20k",
 
-                    likeCount: "7k"
+                    likeCount: "7k",
+                    
+                    isFavourite: true
 
                 ),
                 
                 ProductItem(
+                    reelId: 20,
 
                     productImage: "cardImage5",
 
@@ -374,7 +411,9 @@ struct ExploreDummyData {
 
                     visitCount: "18.8k",
 
-                    likeCount: "6.9k Likes"
+                    likeCount: "6.9k Likes",
+                    
+                    isFavourite: true
 
                 ),
 

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseFirestore
 
 class PersonalChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -24,6 +25,11 @@ class PersonalChatViewController: UIViewController, UITableViewDataSource, UITab
     @IBOutlet weak var optionButton : UIButton!
     @IBOutlet weak var tableView : UITableView!
     
+     var currentUserId : String = ""
+     var otherUserID : String = ""
+    
+    private var messages : [ChatMessage] = []
+    private var listener : ListenerRegistration?
     
     
     override func viewDidLoad() {
@@ -46,26 +52,83 @@ class PersonalChatViewController: UIViewController, UITableViewDataSource, UITab
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableView.automaticDimension
         
+        startListening()
     }
+    
+    func startListening() {
+           listener = ChatService.shared.listenForMessages(userA: currentUserId, userB: otherUserID) { [weak self] messages in
+               guard let self = self else { return }
+               self.messages = messages
+               DispatchQueue.main.async {
+                   self.tableView.reloadData()
+                   self.scrollToBottom()
+               }
+           }
+       }
+    
+    func scrollToBottom() {
+           guard !messages.isEmpty else { return }
+           let lastIndex = IndexPath(row: messages.count - 1, section: 0)
+           tableView.scrollToRow(at: lastIndex, at: .bottom, animated: true)
+    }
+    
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 20
+//        return 20
+        
+        return messages.count
     }
+    
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        
+//        if indexPath.row % 2 == 0 {
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "PersonalChatSendTableViewCell", for: indexPath) as! PersonalChatSendTableViewCell
+//            return cell
+//        }else{
+//            let cell = tableView.dequeueReusableCell(withIdentifier: "PersonalChatAcceptTableViewCell", for: indexPath) as! PersonalChatAcceptTableViewCell
+//            return cell
+//        }
+//        
+//    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let message = messages[indexPath.row]
+        let isMine = message.senderdId == currentUserId
         
-        if indexPath.row % 2 == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PersonalChatSendTableViewCell", for: indexPath) as! PersonalChatSendTableViewCell
-            return cell
-        }else{
-            let cell = tableView.dequeueReusableCell(withIdentifier: "PersonalChatAcceptTableViewCell", for: indexPath) as! PersonalChatAcceptTableViewCell
-            return cell
+        print(" currentUserId:", currentUserId)
+        print(" otherUserID:", otherUserID)
+
+            if isMine {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "PersonalChatSendTableViewCell", for: indexPath) as! PersonalChatSendTableViewCell
+                cell.messageLabel.text = message.text
+                cell.timeLabel.text = formatTime(message.timestamp)
+                return cell
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: "PersonalChatAcceptTableViewCell", for: indexPath) as! PersonalChatAcceptTableViewCell
+                cell.messageLabel.text = message.text
+                cell.timeLabel.text = formatTime(message.timestamp)
+                return cell
+            }
         }
-        
+    
+    @IBAction func sendButtonTapped(_ sender: UIButton) {
+            guard let text = typingTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { return }
+
+            ChatService.shared.sendMessage(from: currentUserId, to: otherUserID, text: text)
+            typingTextField.text = ""
     }
     
+    
+    
+    func formatTime(_ date: Date) -> String {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "h:mm a"
+            return formatter.string(from: date)
+        }
+    
     @IBAction func PreviousPage(_ sender : UIButton){
+        listener?.remove()
         navigationController?.popViewController(animated: true)
     }
 }

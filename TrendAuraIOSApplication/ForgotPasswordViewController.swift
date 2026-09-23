@@ -17,6 +17,8 @@ class ForgotPasswordViewController: UIViewController {
     
     @IBOutlet weak var continueButton : UIButton!
     
+    let viewModel = ForgotPasswordViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -42,6 +44,26 @@ class ForgotPasswordViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         
         view.addGestureRecognizer(tapGesture)
+        
+        
+        viewModel.onLoadingChnaged = {[weak self] isLoading in
+            self?.continueButton.isEnabled = !isLoading
+        }
+        
+        viewModel.onError = {[weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onOTPSend = {[weak self] in
+            guard let self = self else{ return}
+            
+            let otpPage = storyboard?.instantiateViewController(withIdentifier: "VerifyOTPViewController") as! VerifyOTPViewController
+            
+            otpPage.viewModel.email = self.viewModel.email
+            
+            navigationController?.pushViewController(otpPage, animated: true)
+        }
+        
     }
     
     @objc private func hideKeyboard() {
@@ -68,19 +90,20 @@ class ForgotPasswordViewController: UIViewController {
     
     @IBAction func continueTapped(_ sender : UIButton){
         
-        guard !emailTextField.isEmpty() else {
-            show_Alert(message: "Please enter your email.")
-            return
-        }
+//        guard !emailTextField.isEmpty() else {
+//            show_Alert(message: "Please enter your email.")
+//            return
+//        }
+//        
+//        guard emailTextField.isValidEmail() else{
+//            show_Alert(message: "Please enter a valid email address.")
+//            return
+//        }
         
-        guard emailTextField.isValidEmail() else{
-            show_Alert(message: "Please enter a valid email address.")
-            return
-        }
+        viewModel.email = emailTextField.text ?? ""
+        viewModel.sendOTPTapped()
         
-        let otpPage = storyboard?.instantiateViewController(withIdentifier: "VerifyOTPViewController") as! VerifyOTPViewController
         
-        navigationController?.pushViewController(otpPage, animated: true)
         
     }
     

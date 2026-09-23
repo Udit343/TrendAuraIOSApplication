@@ -21,6 +21,8 @@ class VerifyOTPViewController: UIViewController {
     @IBOutlet weak var dontgetCodeLabel : UILabel!
     @IBOutlet weak var resendButton : UIButton!
     
+    let viewModel = ForgotResetOTPViewModel()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,7 +48,7 @@ class VerifyOTPViewController: UIViewController {
         resendButton.titleLabel?.font = UIFont.Outfit_Medium(size: 12.5)
         
         
-        let email = "info@agicent.com"
+        let email = viewModel.email
         let describe = "We’ve sent you a six digit code to your registered email address"
         let fullText = "\(describe) \(email)"
         
@@ -57,12 +59,12 @@ class VerifyOTPViewController: UIViewController {
         let emailrange = NSRange(location: describe.count + 1, length: email.count)
         
         attributedText.addAttributes([
-            .font : UIFont.Outfit_Light(size: 12.5),
+            .font : UIFont.Outfit_Light(size: 11),
             .foregroundColor : UIColor.white
         ], range: descibeRange)
         
         attributedText.addAttributes([
-            .font : UIFont.Outfit_SemiBold(size: 12.5),
+            .font : UIFont.Outfit_SemiBold(size: 11),
             .foregroundColor : UIColor.white
         ], range: emailrange)
         
@@ -73,6 +75,23 @@ class VerifyOTPViewController: UIViewController {
         )
         
         view.addGestureRecognizer(tapGesture)
+        
+        viewModel.onLoadingChanged = {[weak self] isLoading in
+            self?.submitButton.isEnabled = !isLoading
+        }
+        
+        viewModel.onError = {[weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onOTPVerified = {[weak self] in
+            guard let self = self else {return}
+            
+            let gotoResetPage = storyboard?.instantiateViewController(withIdentifier: "ResetPasswordViewController") as! ResetPasswordViewController
+            
+            navigationController?.pushViewController(gotoResetPage, animated: true)
+            
+        }
         
     }
     
@@ -100,23 +119,29 @@ class VerifyOTPViewController: UIViewController {
     
     @IBAction func submitButtonTapped(_ sender : UIButton){
               
-        guard !otpTextField.isEmpty() else{
-            show_Alert(message: "Fill OTP")
-            return
-        }
+//        guard !otpTextField.isEmpty() else{
+//            show_Alert(message: "Fill OTP")
+//            return
+//        }
+//        
+//        guard otpTextField.isValidPassword() else{
+//            show_Alert(message: "Enter correct otp")
+//            return
+//        }
         
-        guard otpTextField.isValidPassword() else{
-            show_Alert(message: "Enter correct otp")
-            return
-        }
+        let otp = otpTextField.text
         
-        let gotoResetPage = storyboard?.instantiateViewController(withIdentifier: "ResetPasswordViewController") as! ResetPasswordViewController
+        viewModel.ContinueTapped(otp: otp!)
         
-        navigationController?.pushViewController(gotoResetPage, animated: true)
+       
     }
     
     
     @IBAction func backButtonTapped(_ sender : UIButton){
         navigationController?.popViewController(animated: true)
+    }
+    
+    @IBAction func resend(_ sender : UIButton){
+        viewModel.resendTapped()
     }
 }

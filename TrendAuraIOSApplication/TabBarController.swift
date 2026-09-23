@@ -34,7 +34,7 @@ class TabBarController: UITabBarController {
 
                 let add = UINavigationController(
                     rootViewController: sb.instantiateViewController(
-                        withIdentifier: "ExploreViewController")
+                        withIdentifier: "UploadPhotoSlideshow_ViewController")
                 )
 
                 let inbox = UINavigationController(

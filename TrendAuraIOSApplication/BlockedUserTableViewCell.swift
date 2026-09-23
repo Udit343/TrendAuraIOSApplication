@@ -21,6 +21,8 @@ class BlockedUserTableViewCell: UITableViewCell {
         blockedButton.clipsToBounds = true
 
         selectionStyle = .none
+        
+        blockedUserImage.layer.cornerRadius = blockedUserImage.frame.height / 2
     }
 
     override func layoutSubviews() {
@@ -38,13 +40,13 @@ class BlockedUserTableViewCell: UITableViewCell {
         //print("Button Tapped")
     }
 
-    func configure(with userData: User) {
+    func configure(with userData: BlockedUser) {
 
-        nameLabel.text = userData.name
-        blockedUserImage.image = UIImage(named: userData.imageName)
+        nameLabel.text = userData.blockedToName
+        blockedUserImage.loadImage(from: userData.profilePic, placeholder: UIImage(named: "blockedUser1"))
         //subNameLabel.text = userData.subname
         
-        let username = userData.subname
+        let username = userData.userName
 
                 let attributedText = NSMutableAttributedString(
                     string: username
@@ -106,7 +108,7 @@ class BlockedUserTableViewCell: UITableViewCell {
                 endPoint: CGPoint(x: 0, y: 1)
             )
 
-            blockedButton.setTitle("Unblocked", for: .normal)
+            blockedButton.setTitle("Unblock", for: .normal)
 
         } else {
 
@@ -114,7 +116,7 @@ class BlockedUserTableViewCell: UITableViewCell {
             blockedButton.backgroundColor =
                 UIColor.black.withAlphaComponent(0.2)
 
-            blockedButton.setTitle("Blocked", for: .normal)
+            blockedButton.setTitle("Block", for: .normal)
         }
     }
 }

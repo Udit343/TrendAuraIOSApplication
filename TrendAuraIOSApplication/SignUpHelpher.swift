@@ -1,9 +1,6 @@
-//
 //  SignUpHelpher.swift
 //  TrendAuraIOSApplication
-//
 //  Created by UDIT PANDEY on 21/07/26.
-//
 
 import Foundation
 

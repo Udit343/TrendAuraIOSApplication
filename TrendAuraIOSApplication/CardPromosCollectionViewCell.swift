@@ -26,6 +26,12 @@ class CardPromosCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var likeImage : UIImageView!
     @IBOutlet weak var likeLabel: UILabel!
     
+    @IBOutlet weak var addCardButton : UIButton!
+    
+    private var isFavourite = false
+    
+    var onCartToggle : ((Bool, @escaping(Bool)->Void)->Void)?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
@@ -56,15 +62,20 @@ class CardPromosCollectionViewCell: UICollectionViewCell {
         
         likeView.layer.cornerRadius = screenHeightFactor * 9
         likeLabel.font = UIFont.Outfit_Bold(size: 6.5)
+        
+        cardProfileImageView.layer.cornerRadius = cardProfileImageView.bounds.height / 2
+        cardProfileImageView.clipsToBounds = true
+        
+        cardImageView.layer.cornerRadius = screenHeightFactor * 7
     }
     
-    func configure(with item: CardItem) {
+    func configure(with item: ProductItem) {
 
-            cardImageView.image = UIImage(named: item.productImage)
+        cardImageView.loadImage(from: item.productImage , placeholder: UIImage(named: "cardImage"))
 
-            cardProfileImageView.image = UIImage(named: item.profileImage)
+        cardProfileImageView.loadImage(from: item.profileImage, placeholder: UIImage(named: "cardProfileImage"))
 
-            nameLabel.text = item.profileName
+        nameLabel.text = item.profileName
 
             cardTitleLabel.text = item.title
 
@@ -108,5 +119,11 @@ class CardPromosCollectionViewCell: UICollectionViewCell {
         )
     }
     
-    
+    @IBAction func addToCartButtonTapped(_ sender : UIButton){
+        onCartToggle?(isFavourite){[weak self] success in
+            guard let self = self else { return }
+            self.isFavourite.toggle()
+            self.addCartLabel.text = self.isFavourite ? "Added" : "Add to cart"
+        }
+    }
 }

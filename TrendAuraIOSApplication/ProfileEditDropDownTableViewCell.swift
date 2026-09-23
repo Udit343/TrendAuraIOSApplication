@@ -36,12 +36,19 @@ class ProfileEditDropDownTableViewCell: UITableViewCell{
         selectionStyle = .none
     }
     
-    func configure(with items: [String], placeholder: String) {
+    func configure(with items: [String], placeholder: String, selected : String? = nil) {
 
         self.items = items
         pickerView.reloadAllComponents()
 
-        dropdownTextField.text = placeholder
+        if let selected = selected, !selected.isBlank(){
+            dropdownTextField.text = selected
+            if let index = items.firstIndex(of:selected){
+                pickerView.selectRow(index, inComponent: 0, animated: false)
+            }
+        }else{
+            dropdownTextField.text = placeholder
+        }
 
 //        dropdownTextField.setPlaceholder(
 //            text: placeholder,

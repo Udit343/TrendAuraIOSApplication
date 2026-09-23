@@ -1,9 +1,6 @@
-//
 //  CardCollectionViewCell.swift
 //  TrendAuraIOSApplication
-//
 //  Created by UDIT PANDEY on 21/07/26.
-//
 
 import UIKit
 
@@ -26,6 +23,16 @@ class CardCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var likeView: UIView!
     @IBOutlet weak var likeImage : UIImageView!
     @IBOutlet weak var likeLabel: UILabel!
+    @IBOutlet weak var addToCartHelpherView : UIView!
+    
+    @IBOutlet weak var addToCartButton : UIButton!
+    
+    var onAddToCartTapped : (()->Void)?
+    
+    private var isFavourite = false
+    
+    var onCartToggle: ((Bool, @escaping (Bool) -> Void) -> Void)?
+
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -57,13 +64,20 @@ class CardCollectionViewCell: UICollectionViewCell {
         
         likeView.layer.cornerRadius = screenHeightFactor * 10
         likeLabel.font = UIFont.Outfit_Bold(size: 7)
+        
+        cardImageView.layer.cornerRadius = screenHeightFactor * 6
+        
+        cardProfileImageView.layer.cornerRadius = 12 *  screenHeightFactor
+        cardProfileImageView.clipsToBounds = true
+        
+       
     }
     
     func configure(with item: ProductItem) {
 
-            cardImageView.image = UIImage(named: item.productImage)
+        cardImageView.loadImage(from: item.productImage, placeholder: UIImage(named: "thumbnailImage"))
 
-            cardProfileImageView.image = UIImage(named: item.profileImage)
+        cardProfileImageView.loadImage(from: item.profileImage, placeholder: UIImage(named: "cardProfileImage"))
 
             nameLabel.text = item.profileName
 
@@ -82,6 +96,10 @@ class CardCollectionViewCell: UICollectionViewCell {
            cartImageView.image = UIImage(named: "cart")
         
            globeImageView.image = UIImage(named: "globe")
+        
+           self.isFavourite = item.isFavourite
+        
+           addCartLabel.text = isFavourite ? "Added" : "Add to cart"
         }
     
     override func layoutSubviews() {
@@ -107,6 +125,16 @@ class CardCollectionViewCell: UICollectionViewCell {
         endPoint: CGPoint(x: 0, y: 1)
         )
     }
+    
+    @IBAction func addToCartTapped(_ sender : UIButton){
+        onCartToggle?(isFavourite){[weak self] success in
+            guard let self = self, success else { return }
+            self.isFavourite.toggle()
+            self.addCartLabel.text = self.isFavourite ? "Added" : "Add to cart"
+        }
+    }
+    
+    
 }
 
 

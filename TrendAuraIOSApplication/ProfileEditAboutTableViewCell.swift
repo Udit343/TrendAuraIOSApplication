@@ -1,9 +1,6 @@
-//
 //  ProfileEditAboutTableViewCell.swift
 //  TrendAuraIOSApplication
-//
 //  Created by UDIT PANDEY on 03/08/26.
-//
 
 import UIKit
 
@@ -20,12 +17,21 @@ class ProfileEditAboutTableViewCell: UITableViewCell, UITextViewDelegate {
         outerView.layer.borderWidth = 1
         outerView.layer.borderColor = UIColor.white.withAlphaComponent(0.3).cgColor
         
-        textView.text = "Enter here...."
-        textView.textColor = UIColor.white.withAlphaComponent(0.5)
+        
         textView.font = UIFont.Outfit_Regular(size: 13)
         textView.delegate = self
         
         selectionStyle = .none
+    }
+    
+    func configure(with text : String){
+        if text.isBlank(){
+            textView.text = "Enter here...."
+            textView.textColor = UIColor.white.withAlphaComponent(0.5)
+        }else{
+            textView.text = text
+            textView.textColor = .white
+        }
     }
     
     func textViewDidChange(_ textView: UITextView) {

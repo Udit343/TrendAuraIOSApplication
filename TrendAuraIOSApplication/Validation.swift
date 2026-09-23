@@ -1,9 +1,6 @@
-//
 //  Validation.swift
 //  TrendAuraIOSApplication
-//
 //  Created by UDIT PANDEY on 23/07/26.
-//
 
 import Foundation
 import UIKit

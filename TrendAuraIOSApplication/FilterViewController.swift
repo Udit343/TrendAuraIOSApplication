@@ -21,6 +21,13 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
     
     var ischeck = false
     
+    let viewModel = FilterViewModel()   
+
+        // lets Explore/Search receive the filtered results
+        //var onFiltersApplied: (([ReelItem]) -> Void)?
+    
+    weak var hostNavigationController: UINavigationController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -50,12 +57,34 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
             target: self,
             action: #selector(backgroundTapped)
         )
-        
-        
         view.addGestureRecognizer(tapGesture)
-        
         tapGesture.cancelsTouchesInView = false
         
+        viewModel.onError = { [weak self] message in
+            self?.show_Alert(message: message)
+        }
+        
+        viewModel.onLoadingChanged = { [weak self] isLoading in
+            self?.applyButton.isEnabled = !isLoading
+        }
+        
+        viewModel.onFilterApplied = { [weak self] reels in
+            guard let self = self else { return }
+            
+            let resultVC = self.storyboard?.instantiateViewController(
+                withIdentifier: "FilterResultViewController"
+            ) as! FilterResultViewController
+            
+            resultVC.reels = reels
+            
+            // Capture it into a local BEFORE dismiss — no ambiguity, no chain-walking
+            let nav = self.hostNavigationController
+            
+            self.dismiss(animated: true) {
+                //print(" nav at push time:", nav as Any)
+                nav?.pushViewController(resultVC, animated: true)
+            }
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -102,9 +131,15 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
             
             let cell = tableView.dequeueReusableCell(withIdentifier: "FilterSubSectionTableViewCell", for: indexPath) as! FilterSubSectionTableViewCell
             
-        cell.configure(with: allFilterSections[indexPath.section].items[indexPath.row-1])
+    cell.configure(with: allFilterSections[indexPath.section].items[indexPath.row - 1], isChecked: viewModel.isChecked(at: indexPath)
+    )
+        
+        cell.onToggle = { [weak self] in
+                    self?.viewModel.toggle(at: indexPath)
+                    self?.tableView.reloadRows(at: [indexPath], with: .none)
+        }
 
-            return cell
+        return cell
     }
     
 // this is the interface of tapgesture so not require for keyboard hiding anymore
@@ -116,14 +151,20 @@ class FilterViewController: UIViewController, UITableViewDataSource, UITableView
            dismiss(animated: true)
     }
     
+    @IBAction func ResetButtonTapped(_ sender : UIButton){
+        viewModel.resetAll()
+        tableView.reloadData()
+    }
+    
+    
+    @IBAction func ApplyButtonTapped(_ sender : UIButton){
+        viewModel.applyTapped()
+    }
     
     @objc func backgroundTapped(_ sender : UITapGestureRecognizer){
         
         view.endEditing(true)
-
-        
         let location  = sender.location(in: view)
-        
         if !innerView.frame.contains(location){
             dismiss(animated: true)
         }

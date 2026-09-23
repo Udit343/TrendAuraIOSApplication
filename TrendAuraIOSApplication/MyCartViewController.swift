@@ -36,7 +36,8 @@ class MyCartViewController: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet weak var likeLabel : UILabel!
     @IBOutlet weak var likeInnerView : UIView!
     
-    
+    var favouriteReel: FavouriteReelItem?
+        var OnRemoveTapped: (() -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,6 +83,13 @@ class MyCartViewController: UIViewController, UIGestureRecognizerDelegate {
 //        
 //        tapGesture.delegate = self
 //        view.addGestureRecognizer(tapGesture)
+        
+        if let favouriteReel = favouriteReel {
+               configure(with: favouriteReel)
+           }
+        cardImageView.layer.cornerRadius = 6 * screenHeightFactor
+        
+        profileImageView.layer.cornerRadius = profileImageView.frame.height / 2
     }
     
     override func viewDidLayoutSubviews() {
@@ -116,9 +124,28 @@ class MyCartViewController: UIViewController, UIGestureRecognizerDelegate {
 //        dismiss(animated: true)
 //    }
     
+    func configure(with reel: FavouriteReelItem) {   
+        let product = reel.toProductItem()
+        cardImageView.loadImage(from: product.productImage, placeholder: UIImage(named: "cardImage"))
+        profileImageView.loadImage(from: product.profileImage, placeholder: UIImage(named: "cardProfileImage"))
+        profileLabel.text = product.profileName
+        titleLabel.text = product.title
+        subTitleLabel.text = product.subTitle
+        descriptionLabel.text = reel.description
+        hashTag.text = reel.tags
+        visitCountLabel.text = product.visitCount
+        likeLabel.text = product.likeCount
+    }
+
+    
     @IBAction func cancel(_ sender : UIButton){
         
         dismiss(animated: true)
         
     }
+    
+    @IBAction func removeButtonTapped(_ sender : UIButton){
+              OnRemoveTapped?()
+    }
+    
 }
